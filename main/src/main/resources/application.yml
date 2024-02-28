@@ -3,3 +3,4 @@ s3:
   secret: qRtaUjR1Gbd1sDoveFEAGhfEsJAq59yn2n//cv4R
   bucket: sortifydb
   region: us-east-2
+  username: avaneeshkanshi
