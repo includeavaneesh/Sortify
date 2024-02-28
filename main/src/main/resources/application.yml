@@ -1,5 +1,5 @@
 s3:
-  access: AKIAQ3EGRXH6JSOK7KOH
-  secret: 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
+  access: ACCESS_KEY
+  secret: SECRET_KEY
   bucket: sortifydb
   region: us-east-2
