@@ -27,11 +27,13 @@ public class StorageController {
 		byte[] data = storageService.downloadFile(fileName);
 		ByteArrayResource rsc = new ByteArrayResource(data);
 		
+		storageService.getAllFile();
+		
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.contentLength(data.length)
 				.header("Content-type","application/octet-stream")
-				.header("Contnt-disposition", "attachment; filename=\"" + fileName + "\"")
+				.header("Content-disposition", "attachment; filename=\"" + fileName + "\"")
 				.body(rsc);
 	}
 	
