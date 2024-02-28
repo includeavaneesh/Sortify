@@ -32,6 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
-### MVN ###
+### Maven ###
+.mvn
+mvnw
+mvnw.cmd
 
 /src/main/resources/application.yml
