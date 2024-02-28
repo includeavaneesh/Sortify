@@ -5,13 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a391c3fc-c0e8-4d6b-8018-cfc161f79e08" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Sortify.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/src/main/java/com/sortify/main/controller/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/src/main/java/com/sortify/main/controller/Controller.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/src/main/java/com/sortify/main/controller/StorageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/src/main/java/com/sortify/main/controller/StorageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/src/main/java/com/sortify/main/service/CloudStorageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/src/main/java/com/sortify/main/service/CloudStorageService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +65,12 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\avane\OneDrive\Documents\Sortify\main\src\main\resources\static" />
+      <recent name="C:\Users\avane\OneDrive\Documents\Sortify\main\src\main\java\com\sortify\main\controller" />
+    </key>
+  </component>
   <component name="RunManager" selected="Spring Boot.MainApplication">
     <configuration name="Main" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="BUNDLED" />
@@ -86,6 +88,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.Main" />
+      <item itemvalue="Spring Boot.MainApplication" />
+    </list>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>

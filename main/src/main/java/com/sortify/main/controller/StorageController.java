@@ -24,6 +24,7 @@ public class StorageController {
 	
 	@GetMapping("/download/{fileName}")
 	public ResponseEntity<ByteArrayResource> download(@PathVariable String fileName) {
+		System.out.println("Entered download");
 		byte[] data = storageService.downloadFile(fileName);
 		ByteArrayResource rsc = new ByteArrayResource(data);
 		

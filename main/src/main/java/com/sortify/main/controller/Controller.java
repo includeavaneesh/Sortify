@@ -24,7 +24,11 @@ public class Controller {
 	
 	@Autowired
 	private UserServiceInterface server;
-	
+
+	@GetMapping("/hello")
+	public String getResponse() {
+		return "hello from servr";
+	}
 	//have one point of entrance to model
 	@GetMapping("/{username}")
 	public SortifyUser getUser(@PathVariable String username) {
