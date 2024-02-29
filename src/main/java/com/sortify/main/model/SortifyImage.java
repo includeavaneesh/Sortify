@@ -1,10 +1,17 @@
 package com.sortify.main.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.Id;
+
 import java.util.Arrays;
 import java.util.Date;
 
+@Entity
 public class SortifyImage {
-	
+
+	private String folderId;
+	@Id
 	private String fileName;
 	private String fileType;
 	private double [] geoLocation;
