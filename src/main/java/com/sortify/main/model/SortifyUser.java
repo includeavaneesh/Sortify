@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
@@ -23,11 +24,13 @@ public class SortifyUser {
 	@Lob
 	private byte[] profilePhoto;
 
+	@OneToOne(mappedBy = "user")
+	private SortifyFolder parentFolder;
 	public SortifyUser() {
-		this(null,null,null,null,null);
+		this(null,null,null,null,null,null);
 	}
 
-	public SortifyUser(String username, String password, String userFirstName, String userLastName, MultipartFile profilePhoto) {
+	public SortifyUser(String username, String password, String userFirstName, String userLastName, MultipartFile profilePhoto, SortifyFolder parentFolder) {
 		super();
 
 		this.username = username;
@@ -35,6 +38,7 @@ public class SortifyUser {
 		this.userFirstName = userFirstName;
 		this.userLastName = userLastName;
 		this.profilePhoto = getProfilePhotoInBytes(profilePhoto);
+		this.parentFolder = parentFolder;
 	}
 	
 	public SortifyUser(SortifyUser user) {
@@ -45,6 +49,7 @@ public class SortifyUser {
 		this.userLastName = user.userLastName;
 		this.password = user.password;
 		this.profilePhoto = user.profilePhoto;
+		this.parentFolder = user.parentFolder;
 	}
 
 	public String getUsername() {
@@ -59,11 +64,11 @@ public class SortifyUser {
 		return userLastName;
 	}
 
-	public String password() {
+	public String getPassword() {
 		return password;
 	}
 
-	public byte[] profilePhoto() {
+	public byte[] getProfilePhoto() {
 		return profilePhoto;
 	}
 
@@ -90,8 +95,14 @@ public class SortifyUser {
 
 	@Override
 	public String toString() {
-		return "SortifyUser [username=" + username + ", userFirstName=" + userFirstName + ", userLastName="
-				+ userLastName + "]";
+		return "SortifyUser{" +
+				"username='" + username + '\'' +
+				", password='" + password + '\'' +
+				", userFirstName='" + userFirstName + '\'' +
+				", userLastName='" + userLastName + '\'' +
+				", profilePhoto=" + Arrays.toString(profilePhoto) +
+				", parentFolder=" + parentFolder +
+				'}';
 	}
 
 	private File toFile(MultipartFile file) {
