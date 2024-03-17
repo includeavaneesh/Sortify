@@ -17,7 +17,7 @@ public class SortifySubFolder {
     @Column(nullable = false)
     private SortifyFolder parentFolder;
 
-    @OneToMany(mappedBy = "subFolder")
+    @OneToMany(mappedBy = "subFolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SortifyImage> imageList;
 
     public SortifySubFolder() {

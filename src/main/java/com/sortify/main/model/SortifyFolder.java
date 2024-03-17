@@ -14,7 +14,7 @@ public class SortifyFolder {
     @OneToOne
     @JoinColumn(name = "username")
     private SortifyUser user;
-    @OneToMany(mappedBy = "parentFolder")
+    @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SortifySubFolder> subFolders;
 
     public SortifyFolder() {

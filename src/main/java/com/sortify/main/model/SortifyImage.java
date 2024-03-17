@@ -2,7 +2,6 @@ package com.sortify.main.model;
 
 import jakarta.persistence.*;
 
-import java.util.Arrays;
 import java.util.Date;
 
 @Entity
@@ -101,4 +100,6 @@ public class SortifyImage {
 				", subFolder=" + subFolder +
 				'}';
 	}
+
+
 }

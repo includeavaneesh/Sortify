@@ -24,7 +24,7 @@ public class SortifyUser {
 	@Lob
 	private byte[] profilePhoto;
 
-	@OneToOne(mappedBy = "user")
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private SortifyFolder parentFolder;
 	public SortifyUser() {
 		this(null,null,null,null,null,null);
