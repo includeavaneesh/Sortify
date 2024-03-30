@@ -5,12 +5,12 @@ import java.util.ArrayList;
 
 import com.sortify.main.model.SortifyUser;
 
-public interface UserServiceInterface {
+public interface SortifyUserService {
 	
-	void addUser(SortifyUser user);
+	SortifyUser addUser(SortifyUser user);
 	void deleteUser(String username);
 	ArrayList<SortifyUser> retrieveAll();
 	SortifyUser findUserByUsername(String username);
-	SortifyUser modifyUser(SortifyUser newUser, SortifyUser targetUser) throws Exception;
+	SortifyUser modifyUser(String username, SortifyUser targetUser) throws Exception;
 	void saveUser(SortifyUser user);
 }

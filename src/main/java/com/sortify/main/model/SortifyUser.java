@@ -11,9 +11,10 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
+@Table(name = "SORTIFY_USER")
 public class SortifyUser {
 	@Id
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String username;
 	@Column(nullable = false)
 	private String password;
@@ -27,7 +28,11 @@ public class SortifyUser {
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private SortifyFolder parentFolder;
 	public SortifyUser() {
-		this(null,null,null,null,null,null);
+
+	}
+
+	public SortifyUser(byte[] b) {
+		this.profilePhoto = b;
 	}
 
 	public SortifyUser(String username, String password, String userFirstName, String userLastName, MultipartFile profilePhoto, SortifyFolder parentFolder) {
@@ -40,6 +45,28 @@ public class SortifyUser {
 		this.profilePhoto = getProfilePhotoInBytes(profilePhoto);
 		this.parentFolder = parentFolder;
 	}
+
+	public SortifyUser(String username, String password, String userFirstName, String userLastName, SortifyFolder parentFolder) {
+		super();
+
+		this.username = username;
+		this.password = password;
+		this.userFirstName = userFirstName;
+		this.userLastName = userLastName;
+		this.parentFolder = parentFolder;
+	}
+
+	public SortifyUser(String username, String password, String userFirstName, String userLastName, MultipartFile profilePhoto) {
+		super();
+
+		this.username = username;
+		this.password = password;
+		this.userFirstName = userFirstName;
+		this.userLastName = userLastName;
+		this.profilePhoto = getProfilePhotoInBytes(profilePhoto);
+	}
+
+
 	
 	public SortifyUser(SortifyUser user) {
 		super();

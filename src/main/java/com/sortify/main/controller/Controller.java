@@ -7,12 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
 import com.sortify.main.model.SortifyUser;
-import com.sortify.main.service.UserService;
-import com.sortify.main.service.UserServiceInterface;
+import com.sortify.main.service.SortifyUserService;
 
 /**
  * This is the User controller RESTApi endpoint controller class
@@ -23,7 +19,7 @@ import com.sortify.main.service.UserServiceInterface;
 public class Controller {
 	
 	@Autowired
-	private UserServiceInterface server;
+	private SortifyUserService server;
 
 	@GetMapping("/hello")
 	public String getResponse() {
@@ -55,7 +51,7 @@ public class Controller {
 			SortifyUser tempUser = server.findUserByUsername(username);
 			
 			if(tempUser!=null) {
-				tempUser = server.modifyUser(newUserData, tempUser);
+				tempUser = server.modifyUser("newUserData", tempUser);
 				server.saveUser(tempUser);
 				return ResponseEntity.status(HttpStatus.OK).body(tempUser);
 			}

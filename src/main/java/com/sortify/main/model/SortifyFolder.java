@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "SORTIFY_PARENT_FOLDER")
 public class SortifyFolder {
 
     @Id
@@ -18,7 +18,7 @@ public class SortifyFolder {
     private List<SortifySubFolder> subFolders;
 
     public SortifyFolder() {
-        this(null,null,null,null);
+
     }
 
     public SortifyFolder(String folderId, String folderName, SortifyUser user, List<SortifySubFolder> subFolders) {

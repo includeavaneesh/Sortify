@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "SORTIFY_CHILD_FOLDER")
 public class SortifySubFolder {
     @Id
     @Column(nullable = false)
@@ -14,7 +14,6 @@ public class SortifySubFolder {
 
     @ManyToOne
     @JoinColumn(name = "folderId")
-    @Column(nullable = false)
     private SortifyFolder parentFolder;
 
     @OneToMany(mappedBy = "subFolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

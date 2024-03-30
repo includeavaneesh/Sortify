@@ -1,96 +1,82 @@
 package com.sortify.main.service;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-import org.springframework.stereotype.Component;
+import com.sortify.main.repository.SortifyUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sortify.main.model.SortifyUser;
+import org.springframework.stereotype.Service;
 
-@Component
-public class UserService implements UserServiceInterface{
-	
-	private static List<SortifyUser> userList = new ArrayList<SortifyUser>();
-	
+@Service
+public class UserService implements SortifyUserService {
+
+	@Autowired
+	private SortifyUserRepository userRepo;
+
 	@Override
-	public void addUser(SortifyUser user) {
-		Iterator<SortifyUser> iter = userList.iterator();
-		
-		while(iter.hasNext()) {
-			SortifyUser tempUser = iter.next();
-			if(tempUser.getUsername().equals(user.getUsername())) {
-				return;
-			}
-		}
-		
-		userList.add(user);
+	public SortifyUser addUser(SortifyUser user) {
+		return userRepo.save(user);
 	}
 	
 	@Override
 	public void deleteUser(String username) {
-		Iterator<SortifyUser> iter = userList.iterator();
-		
-		while(iter.hasNext()) {
-			SortifyUser tempUser = iter.next();
-			if(tempUser.getUsername().equals(username)) {
-				iter.remove();
-				return;
-			}
-		}
+		userRepo.deleteById(username);
 	}
 	
 	@Override
 	public ArrayList<SortifyUser> retrieveAll() {
-		return (ArrayList<SortifyUser>) userList;
+		return (ArrayList<SortifyUser>) userRepo.findAll();
 	}
 	
 	@Override
 	public SortifyUser findUserByUsername(String username) {
-		Iterator<SortifyUser> iter = userList.iterator();
-		while(iter.hasNext()) {
-			SortifyUser tempUser = iter.next();
-			if(tempUser.getUsername().equals(username)) {
-				
-				return tempUser;
-			}
+		if(userRepo.findById(username).isPresent()) {
+			return userRepo.findById(username).get();
 		}
-		
+
 		return null;
 	}
 	
 	@Override
-	public SortifyUser modifyUser(SortifyUser newUser, SortifyUser targetUser) throws IllegalAccessException{
-		Class<?> userClass = SortifyUser.class;
-		Field[] userFields = userClass.getDeclaredFields();
-		
-		for(Field field : userFields) {
-			field.setAccessible(true);
-			
-			Object value = field.get(newUser);
-			
-			if(value!=null) {
-				field.set(targetUser, value);
+	public SortifyUser modifyUser(String username, SortifyUser newUser) throws IllegalAccessException{
+		SortifyUser oldUser = findUserByUsername(username);
+
+		if(oldUser != null && newUser != null) {
+
+			if(oldUser.getUsername()!=null && newUser.getUsername()!=null){
+				oldUser.setUsername(newUser.getUsername());
 			}
-			
-			field.setAccessible(false);
+
+			if(oldUser.getUserFirstName()!=null && newUser.getUserFirstName()!=null) {
+				oldUser.setUserFirstName(newUser.getUserFirstName());
+			}
+
+			if(oldUser.getUserLastName()!=null && newUser.getUserLastName()!=null) {
+				oldUser.setUserLastName(newUser.getUserLastName());
+			}
+
+			if(oldUser.getPassword()!=null && newUser.getPassword()!=null) {
+				oldUser.setPassword(newUser.getPassword());
+			}
+
+			if(oldUser.getUserLastName()!=null && newUser.getUserLastName()!=null) {
+				oldUser.setUserLastName(newUser.getUserLastName());
+			}
+
+			if(oldUser.getProfilePhoto().length>0 && newUser.getProfilePhoto().length>0) {
+				oldUser.setProfilePhoto(newUser.getProfilePhoto());
+			}
+
+			userRepo.save(oldUser);
 		}
-		return targetUser;
+
+		return oldUser;
 		
 	}
 	
 	@Override
 	public void saveUser(SortifyUser user) {
-		Iterator<SortifyUser> iter = userList.iterator();
-		while(iter.hasNext()) {
-			SortifyUser tempUser = iter.next();
-			if(tempUser.getUsername().equals(user.getUsername())) {
-				tempUser = user;
-			}
-		}
-		
-		return;
-		
+
 	}
 }

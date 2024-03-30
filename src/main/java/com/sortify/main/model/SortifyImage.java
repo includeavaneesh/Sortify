@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.Date;
 
-@Entity
+@Entity(name = "SORTIFY_IMAGE")
 public class SortifyImage {
 
 	@Id
