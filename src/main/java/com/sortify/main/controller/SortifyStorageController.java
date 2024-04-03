@@ -11,7 +11,7 @@ import com.sortify.main.service.CloudStorageService;
 
 @RestController
 @RequestMapping("/file")
-public class StorageController {
+public class SortifyStorageController {
 	
 	@Autowired
 	private CloudStorageService storageService;

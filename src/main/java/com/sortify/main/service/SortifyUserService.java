@@ -11,5 +11,5 @@ public interface SortifyUserService {
 	void deleteUser(String username);
 	ArrayList<SortifyUser> retrieveAll();
 	SortifyUser findUserByUsername(String username);
-	SortifyUser modifyUser(String username, SortifyUser targetUser) throws Exception;
+	SortifyUser modifyUser(String username, SortifyUser newUser) throws Exception;
 }
