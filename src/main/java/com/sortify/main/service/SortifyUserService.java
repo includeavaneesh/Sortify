@@ -12,5 +12,4 @@ public interface SortifyUserService {
 	ArrayList<SortifyUser> retrieveAll();
 	SortifyUser findUserByUsername(String username);
 	SortifyUser modifyUser(String username, SortifyUser targetUser) throws Exception;
-	void saveUser(SortifyUser user);
 }

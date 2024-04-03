@@ -10,11 +10,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
+
 @Entity
 @Table(name = "SORTIFY_USER")
 public class SortifyUser {
 	@Id
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private String username;
 	@Column(nullable = false)
 	private String password;
@@ -22,17 +23,16 @@ public class SortifyUser {
 	private String userFirstName;
 
 	private String userLastName;
-	@Lob
-	private byte[] profilePhoto;
 
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@JoinTable(name="User_Folder",
+	joinColumns = @JoinColumn(name = "username"),
+			inverseJoinColumns = @JoinColumn(name = "folder_id")
+	)
+
 	private SortifyFolder parentFolder;
 	public SortifyUser() {
 
-	}
-
-	public SortifyUser(byte[] b) {
-		this.profilePhoto = b;
 	}
 
 	public SortifyUser(String username, String password, String userFirstName, String userLastName, MultipartFile profilePhoto, SortifyFolder parentFolder) {
@@ -42,32 +42,10 @@ public class SortifyUser {
 		this.password = password;
 		this.userFirstName = userFirstName;
 		this.userLastName = userLastName;
-		this.profilePhoto = getProfilePhotoInBytes(profilePhoto);
 		this.parentFolder = parentFolder;
 	}
 
-	public SortifyUser(String username, String password, String userFirstName, String userLastName, SortifyFolder parentFolder) {
-		super();
 
-		this.username = username;
-		this.password = password;
-		this.userFirstName = userFirstName;
-		this.userLastName = userLastName;
-		this.parentFolder = parentFolder;
-	}
-
-	public SortifyUser(String username, String password, String userFirstName, String userLastName, MultipartFile profilePhoto) {
-		super();
-
-		this.username = username;
-		this.password = password;
-		this.userFirstName = userFirstName;
-		this.userLastName = userLastName;
-		this.profilePhoto = getProfilePhotoInBytes(profilePhoto);
-	}
-
-
-	
 	public SortifyUser(SortifyUser user) {
 		super();
 
@@ -75,7 +53,6 @@ public class SortifyUser {
 		this.userFirstName = user.userFirstName;
 		this.userLastName = user.userLastName;
 		this.password = user.password;
-		this.profilePhoto = user.profilePhoto;
 		this.parentFolder = user.parentFolder;
 	}
 
@@ -95,11 +72,13 @@ public class SortifyUser {
 		return password;
 	}
 
-	public byte[] getProfilePhoto() {
-		return profilePhoto;
+	public SortifyFolder getParentFolder() {
+		return parentFolder;
 	}
 
-
+	public void setParentFolder(SortifyFolder parentFolder) {
+		this.parentFolder = parentFolder;
+	}
 
 	public void setUsername(String username) {
 		this.username = username;
@@ -116,9 +95,6 @@ public class SortifyUser {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public void setProfilePhoto(byte[] profilePhoto) {
-		this.profilePhoto = profilePhoto;
-	}
 
 	@Override
 	public String toString() {
@@ -127,7 +103,6 @@ public class SortifyUser {
 				", password='" + password + '\'' +
 				", userFirstName='" + userFirstName + '\'' +
 				", userLastName='" + userLastName + '\'' +
-				", profilePhoto=" + Arrays.toString(profilePhoto) +
 				", parentFolder=" + parentFolder +
 				'}';
 	}

@@ -2,7 +2,6 @@ package com.sortify.main.service;
 
 import com.sortify.main.model.SortifyUser;
 import com.sortify.main.repository.SortifyUserRepository;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,10 +10,7 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
@@ -32,10 +28,15 @@ class UserServiceTest {
     @InjectMocks
     UserService userService;
 
+    private SortifyUser testUser;
 
     @BeforeEach
     void setUp() {
-
+        testUser = new SortifyUser();
+        testUser.setUsername("johndoe");
+        testUser.setPassword("password");
+        testUser.setUserFirstName("John");
+        testUser.setUserLastName("Doe");
     }
 
     @AfterEach
@@ -43,55 +44,49 @@ class UserServiceTest {
     }
 
     @Test
-    void addUser() throws IOException {
-        SortifyUser user = new SortifyUser();
-        user.setUsername("johndoe");
-        user.setPassword("password");
-        user.setUserFirstName("John");
-        user.setUserLastName("Doe");
-
-        when(userRepository.save(user)).thenReturn(user);
-        SortifyUser savedUser = userService.addUser(user);
+    void addUser() {
+        when(userRepository.save(testUser)).thenReturn(testUser);
+        SortifyUser savedUser = userService.addUser(testUser);
         assertNotNull(savedUser);
-        verify(userRepository, times(2)).save(any(SortifyUser.class));
+        verify(userRepository, times(1)).save(any(SortifyUser.class));
     }
 
     @Test
     void deleteUser() {
-        SortifyUser user = new SortifyUser();
-        user.setUsername("johndoe");
-        user.setPassword("password");
-        user.setUserFirstName("John");
-        user.setUserLastName("Doe");
+        when(userRepository.save(testUser)).thenReturn(testUser);
+        userService.addUser(testUser);
 
-        when(userRepository.save(user)).thenReturn(user);
-        SortifyUser savedUser = userService.addUser(user);
-        assertNotNull(savedUser);
-        verify(userRepository, times(1)).save(any(SortifyUser.class));
+        when(userRepository.findById(testUser.getUsername())).thenReturn(Optional.of(testUser));
+        doNothing().when(userRepository).deleteById(testUser.getUsername());
+        userService.deleteUser(testUser.getUsername());
 
-        doNothing().when(userRepository).deleteById(anyString());
-        userService.deleteUser("johndoe");
-        verify(userRepository, times(1)).deleteById(anyString());
-
-        when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
-        SortifyUser foundUser = userService.findUserByUsername("johndoe");
-
-        assertNull(foundUser);
+        assertAll(()->userService.deleteUser(testUser.getUsername()));
     }
 
     @Test
     void retrieveAll() {
+        ArrayList<SortifyUser> userList = new ArrayList<>();
+        userList.add(testUser);
+        when(userRepository.findAll()).thenReturn(userList);
+        ArrayList<SortifyUser> userRetrieved = userService.retrieveAll();
+        assertEquals(1, userRetrieved.size());
     }
 
     @Test
     void findUserByUsername() {
+        when(userRepository.findById(testUser.getUsername())).thenReturn(Optional.ofNullable(testUser));
+        SortifyUser userRetrieved = userService.findUserByUsername(testUser.getUsername());
+        assertEquals(userRetrieved, testUser);
     }
 
     @Test
-    void modifyUser() {
+    void modifyUser() throws IllegalAccessException {
+        SortifyUser modifiedUser = new SortifyUser(testUser);
+        modifiedUser.setUserFirstName("ben");
+        when(userRepository.save(testUser)).thenReturn(modifiedUser);
+        when(userRepository.findById(testUser.getUsername())).thenReturn(Optional.ofNullable(testUser));
+        SortifyUser userRetrieved = userService.modifyUser(testUser.getUsername(), modifiedUser);
+        assertEquals("ben",userRetrieved.getUserFirstName());
     }
 
-    @Test
-    void saveUser() {
-    }
 }

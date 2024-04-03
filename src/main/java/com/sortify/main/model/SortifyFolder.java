@@ -1,8 +1,10 @@
 package com.sortify.main.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
+
 
 @Entity(name = "SORTIFY_PARENT_FOLDER")
 public class SortifyFolder {
@@ -11,11 +13,11 @@ public class SortifyFolder {
     private String folderId;
     private String folderName;
 
-    @OneToOne
-    @JoinColumn(name = "username")
+    @JsonIgnore
+    @OneToOne(mappedBy = "parentFolder")
     private SortifyUser user;
-    @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SortifySubFolder> subFolders;
+//    @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<SortifySubFolder> subFolders;
 
     public SortifyFolder() {
 
@@ -26,7 +28,7 @@ public class SortifyFolder {
         this.folderId = folderId;
         this.folderName = folderName;
         this.user = user;
-        this.subFolders = subFolders;
+//        this.subFolders = subFolders;
     }
 
     public String getFolderId() {
@@ -53,21 +55,21 @@ public class SortifyFolder {
         this.user = user;
     }
 
-    public List<SortifySubFolder> getSubFolders() {
-        return subFolders;
-    }
-
-    public void setSubFolders(List<SortifySubFolder> subFolders) {
-        this.subFolders = subFolders;
-    }
+//    public List<SortifySubFolder> getSubFolders() {
+//        return subFolders;
+//    }
+//
+//    public void setSubFolders(List<SortifySubFolder> subFolders) {
+//        this.subFolders = subFolders;
+//    }
 
     @Override
     public String toString() {
         return "SortifyFolder{" +
                 "folderId='" + folderId + '\'' +
                 ", folderName='" + folderName + '\'' +
-                ", user=" + user +
-                ", subFolders=" + subFolders +
+                ", user=" + user.getUsername() +
+//                ", subFolders=" + subFolders +
                 '}';
     }
 }

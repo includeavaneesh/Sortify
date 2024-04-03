@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-//@Transactional(propagation = Propagation.NOT_SUPPORTED)
 class SortifyUserRepositoryTest {
     @Autowired
     private SortifyUserRepository userRepository;
@@ -68,7 +67,7 @@ class SortifyUserRepositoryTest {
     }
 
     @Test
-    public void dataPersistence() {
+    public void updateUser() {
         SortifyUser retrieved = userRepository.findById(testUser.getUsername()).orElse(null);
         retrieved.setUserLastName("Dover");
         userRepository.save(retrieved);

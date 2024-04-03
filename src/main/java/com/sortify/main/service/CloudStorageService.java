@@ -1,9 +1,10 @@
 package com.sortify.main.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Service;
@@ -37,11 +38,11 @@ public class CloudStorageService {
 	}
 	
 	private File toFile(MultipartFile file) {
-		File convertedFile = new File(file.getOriginalFilename());
+		File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
 		
 		try (FileOutputStream fos = new FileOutputStream(convertedFile)){
 			fos.write(file.getBytes());
-			fos.close();
+
 		}
 		catch(IOException e){
 			System.out.println("Error in file");
@@ -53,11 +54,9 @@ public class CloudStorageService {
 		S3Object s3Obj = cloudClient.getObject(s3BucketName,"photos/"+fileName);
 		S3ObjectInputStream inputStream = s3Obj.getObjectContent();
 		try {
-			byte[] downloadedContent = IOUtils.toByteArray(inputStream);
-			return downloadedContent;
+            return IOUtils.toByteArray(inputStream);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 		
 		return null;
@@ -79,5 +78,40 @@ public class CloudStorageService {
 		    System.out.println(objectSummary.getKey());
 		});
 				
+	}
+
+	/**
+	 * This function creates the main folder of the user
+	 */
+	public void createUserFolder(String userFolderName) {
+		// Assign prefix
+		userFolderName += "/";
+
+		// Initiate with null
+		ObjectMetadata folderMetadata = new ObjectMetadata();
+		folderMetadata.setContentLength(0);
+		InputStream emptyContent = new ByteArrayInputStream(new byte[0]);
+
+		// put folder as key in S3 bucket
+		cloudClient.putObject(s3BucketName,userFolderName,emptyContent,folderMetadata);
+    }
+
+	/**
+	 * This function deletes a bucket
+	 */
+	public void deleteUserFolder(String userFolderName) {
+		userFolderName += "/";
+		ObjectListing objectListing = cloudClient.listObjects(s3BucketName, userFolderName);
+		List<DeleteObjectsRequest.KeyVersion> keys = new ArrayList<>();
+		for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+			keys.add(new DeleteObjectsRequest.KeyVersion(objectSummary.getKey()));
+		}
+		if (!keys.isEmpty()) {
+			DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(s3BucketName)
+					.withKeys(keys)
+					.withQuiet(false);
+			cloudClient.deleteObjects(deleteObjectsRequest);
+		}
+		cloudClient.deleteObject(s3BucketName,userFolderName);
 	}
 }

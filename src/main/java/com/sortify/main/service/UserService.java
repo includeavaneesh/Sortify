@@ -64,19 +64,10 @@ public class UserService implements SortifyUserService {
 				oldUser.setUserLastName(newUser.getUserLastName());
 			}
 
-			if(oldUser.getProfilePhoto().length>0 && newUser.getProfilePhoto().length>0) {
-				oldUser.setProfilePhoto(newUser.getProfilePhoto());
-			}
-
 			userRepo.save(oldUser);
 		}
 
 		return oldUser;
 		
-	}
-	
-	@Override
-	public void saveUser(SortifyUser user) {
-
 	}
 }
