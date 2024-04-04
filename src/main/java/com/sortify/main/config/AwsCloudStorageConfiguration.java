@@ -11,7 +11,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Configuration
-public class awsCloudStorageConfiguration {
+public class AwsCloudStorageConfiguration {
 	
 	
 	@Value("${s3.access}")

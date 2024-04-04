@@ -9,9 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 
 @RestController
+@RequestMapping("/{username}")
 public class SortifyUserController {
     @Autowired
     private SortifyUserService server;
@@ -20,19 +22,20 @@ public class SortifyUserController {
     private CloudStorageService storageService;
 
 
-    @GetMapping("/{username}")
+    @GetMapping("")
     public SortifyUser getUser(@PathVariable String username) {
         return server.findUserByUsername(username);
     }
 
 
-    @DeleteMapping("/delete/{username}")
-    public void removeUser(@PathVariable String username) {
+    @GetMapping("/delete")
+    public void removeUser(Principal principal) {
+        String username = principal.getName();
         storageService.deleteUserFolder(username);
         server.deleteUser(username);
     }
 
-    @PatchMapping(path = "/update/{username}")
+    @PatchMapping(path = "/update")
     public ResponseEntity<SortifyUser> updateUser(
             @PathVariable String username,
             @RequestBody SortifyUser modifiedUser) {

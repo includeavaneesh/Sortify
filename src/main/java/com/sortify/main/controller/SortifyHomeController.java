@@ -4,12 +4,14 @@ import com.sortify.main.model.SortifyFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.sortify.main.model.SortifyUser;
 import com.sortify.main.service.SortifyUserService;
 import com.sortify.main.service.CloudStorageService;
 
+import java.security.Principal;
 import java.util.ArrayList;
 
 /**
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 
 
 @RestController
+@RequestMapping("")
 public class SortifyHomeController {
 
     @Autowired
@@ -26,9 +29,10 @@ public class SortifyHomeController {
     @Autowired
     private CloudStorageService storageService;
 
-    @GetMapping("/welcome")
+
+    @GetMapping("")
     public String getResponse() {
-        return "Sortify Landing Page";
+        return "Sortify Landing Page:";
     }
     //have one point of entrance to model
 
