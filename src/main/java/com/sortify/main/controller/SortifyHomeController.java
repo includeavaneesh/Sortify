@@ -32,7 +32,7 @@ public class SortifyHomeController {
 
     @GetMapping("")
     public String getResponse() {
-        return "Sortify Landing Page:";
+        return "Welcome to Sortify \uD83D\uDE80";
     }
     //have one point of entrance to model
 
