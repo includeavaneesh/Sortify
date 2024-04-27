@@ -9,13 +9,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sortify.main.service.CloudStorageService;
 
+import java.security.Principal;
+
 @RestController
-@RequestMapping("/file")
+@RequestMapping("/{username}/file")
 public class SortifyStorageController {
 	
 	@Autowired
 	private CloudStorageService storageService;
-	
+
+	@GetMapping("")
+	public String testPage(Principal principal) {
+		return "This is accessed by: " + principal.toString();
+	}
 	@PostMapping("/upload")
 	public ResponseEntity<String> upload(@RequestParam(value="file") MultipartFile file) {
 		return new ResponseEntity<>(storageService.uploadFile(file),HttpStatus.OK);
