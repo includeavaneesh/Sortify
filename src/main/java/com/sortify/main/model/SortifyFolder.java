@@ -16,7 +16,11 @@ public class SortifyFolder {
     @JsonIgnore
     @OneToOne(mappedBy = "parentFolder")
     private SortifyUser user;
-//    @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinTable(name="User_SubFolder",
+//            joinColumns = @JoinColumn(name = "folderId"),
+//            inverseJoinColumns = @JoinColumn(name = "subFolderId")
+//    )
 //    private List<SortifySubFolder> subFolders;
 
     public SortifyFolder() {

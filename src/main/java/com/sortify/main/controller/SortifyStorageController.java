@@ -49,4 +49,9 @@ public class SortifyStorageController {
 		return new ResponseEntity<>(storageService.deleteFile(fileName),HttpStatus.OK);
 	}
 
+//	@GetMapping("")
+//	public void createFolder(Principal principal) {
+//
+//	}
+
 }

@@ -3,6 +3,7 @@ package com.sortify.main.config;
 import com.sortify.main.service.JpaUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -26,8 +27,10 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .csrf(csrf -> csrf.disable()) // Disable CSRF
+                .cors(cors -> cors.disable()) // Disable CORS
                 .authorizeHttpRequests(auth -> {
-                            auth.requestMatchers("/").permitAll();
+                            auth.requestMatchers(HttpMethod.POST,"/signup").permitAll();
                             auth.requestMatchers("/{username}/**").access(new WebExpressionAuthorizationManager("#username == authentication.name"));
                             auth.anyRequest().authenticated();
                         }

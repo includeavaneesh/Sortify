@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import com.sortify.main.model.SortifyFolder;
+import com.sortify.main.model.SortifyUser;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +53,7 @@ public class CloudStorageService {
 	}
 	
 	public byte[] downloadFile(String fileName) {
-		S3Object s3Obj = cloudClient.getObject(s3BucketName,"photos/"+fileName);
+		S3Object s3Obj = cloudClient.getObject(s3BucketName,""+fileName);
 		S3ObjectInputStream inputStream = s3Obj.getObjectContent();
 		try {
             return IOUtils.toByteArray(inputStream);
@@ -113,5 +115,10 @@ public class CloudStorageService {
 			cloudClient.deleteObjects(deleteObjectsRequest);
 		}
 		cloudClient.deleteObject(s3BucketName,userFolderName);
+	}
+
+	public void createUserSubFolder(SortifyUser user) {
+		SortifyFolder parentFolder = user.getParentFolder();
+		String subFolder = "testSubFolder";
 	}
 }
