@@ -1,6 +1,7 @@
 package com.sortify.main.controller;
 
 import com.sortify.main.model.SortifyFolder;
+import com.sortify.main.model.SortifySubFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +66,8 @@ public class SortifyHomeController {
     public String logoutUser(@RequestBody SortifyUser user) {
         return "Under construction";
     }
+
+
 
 
 }

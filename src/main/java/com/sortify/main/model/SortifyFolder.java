@@ -3,6 +3,7 @@ package com.sortify.main.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -16,12 +17,8 @@ public class SortifyFolder {
     @JsonIgnore
     @OneToOne(mappedBy = "parentFolder")
     private SortifyUser user;
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinTable(name="User_SubFolder",
-//            joinColumns = @JoinColumn(name = "folderId"),
-//            inverseJoinColumns = @JoinColumn(name = "subFolderId")
-//    )
-//    private List<SortifySubFolder> subFolders;
+    @OneToMany(mappedBy = "parentFolder",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SortifySubFolder> subFolders = new ArrayList<SortifySubFolder>();
 
     public SortifyFolder() {
 
@@ -59,13 +56,17 @@ public class SortifyFolder {
         this.user = user;
     }
 
-//    public List<SortifySubFolder> getSubFolders() {
-//        return subFolders;
-//    }
-//
-//    public void setSubFolders(List<SortifySubFolder> subFolders) {
-//        this.subFolders = subFolders;
-//    }
+    public List<SortifySubFolder> getSubFolders() {
+        return subFolders;
+    }
+
+    public void setSubFolders(List<SortifySubFolder> subFolders) {
+        this.subFolders = subFolders;
+    }
+
+    public void addSubFolder(SortifySubFolder subFolder) {
+        this.subFolders.add(subFolder);
+    }
 
     @Override
     public String toString() {

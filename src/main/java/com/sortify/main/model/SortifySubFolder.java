@@ -12,22 +12,22 @@ public class SortifySubFolder {
     @Column(nullable = false)
     private String subFolderName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "folderId")
     private SortifyFolder parentFolder;
 
-    @OneToMany(mappedBy = "subFolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SortifyImage> imageList;
+//    @OneToMany(mappedBy = "subFolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<SortifyImage> imageList;
 
     public SortifySubFolder() {
-        this(null,null,null,null);
+        this(null,null,null);
     }
-    public SortifySubFolder(String subFolderId, String subFolderName, SortifyFolder parentFolder, List<SortifyImage> imageList) {
+    public SortifySubFolder(String subFolderId, String subFolderName, SortifyFolder parentFolder) {
         super();
         this.subFolderId = subFolderId;
         this.subFolderName = subFolderName;
         this.parentFolder = parentFolder;
-        this.imageList = imageList;
+
     }
 
     public String getSubFolderId() {
@@ -54,11 +54,19 @@ public class SortifySubFolder {
         this.parentFolder = parentFolder;
     }
 
-    public List<SortifyImage> getImageList() {
-        return imageList;
-    }
+//    public List<SortifyImage> getImageList() {
+//        return imageList;
+//    }
+//
+//    public void setImageList(List<SortifyImage> imageList) {
+//        this.imageList = imageList;
+//    }
 
-    public void setImageList(List<SortifyImage> imageList) {
-        this.imageList = imageList;
+    @Override
+    public String toString() {
+        return "SortifySubFolder{" +
+                "subFolderId='" + subFolderId + '\'' +
+                ", subFolderName='" + subFolderName + '\'' +
+                '}';
     }
 }
