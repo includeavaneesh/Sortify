@@ -30,9 +30,9 @@ public class CloudStorageService {
 	@Autowired
 	private AmazonS3 cloudClient;
 	
-	public String uploadFile(MultipartFile file) {
+	public String uploadFile(MultipartFile file, String folderName) {
 		File uploadObject = toFile(file);
-		String fileName = "test/" + file.getOriginalFilename();
+		String fileName = folderName + "/" + file.getOriginalFilename();
 		cloudClient.putObject(new PutObjectRequest(s3BucketName, fileName, uploadObject));
 		uploadObject.delete();
 		return "File uploaded: " + fileName;
@@ -52,8 +52,8 @@ public class CloudStorageService {
 		return convertedFile;
 	}
 	
-	public byte[] downloadFile(String fileName) {
-		S3Object s3Obj = cloudClient.getObject(s3BucketName,""+fileName);
+	public byte[] downloadFile(String fileName, String folderName) {
+		S3Object s3Obj = cloudClient.getObject(s3BucketName, folderName + "/" + fileName);
 		S3ObjectInputStream inputStream = s3Obj.getObjectContent();
 		try {
             return IOUtils.toByteArray(inputStream);
@@ -64,8 +64,8 @@ public class CloudStorageService {
 		return null;
 	}
 	
-	public String deleteFile(String fileName) {
-		cloudClient.deleteObject(s3BucketName, fileName);
+	public String deleteFile(String fileName, String folderName) {
+		cloudClient.deleteObject(s3BucketName, folderName + "/" + fileName);
 		return "Removed: " + fileName;
 	}
 	

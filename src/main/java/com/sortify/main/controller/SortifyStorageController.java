@@ -44,9 +44,9 @@ public class SortifyStorageController {
 	 * @return HTTP Response 200 if uploaded successfully
 	 */
 	@PostMapping("/upload")
-	public ResponseEntity<String> upload(@RequestParam(value="file") MultipartFile file) {
-		return new ResponseEntity<>(storageService.uploadFile(file),HttpStatus.OK);
-				
+	public ResponseEntity<String> upload(@RequestParam(value="file") MultipartFile file, @PathVariable String username) {
+		String folderName = userService.findUserByUsername(username).getParentFolder().getFolderId();
+		return new ResponseEntity<>(storageService.uploadFile(file, folderName),HttpStatus.OK);
 	}
 
 	/**
@@ -55,13 +55,12 @@ public class SortifyStorageController {
 	 * @return Image File requested
 	 */
 	@GetMapping("/download/{fileName}")
-	public ResponseEntity<ByteArrayResource> download(@PathVariable String fileName) {
-		System.out.println("Entered download");
-		byte[] data = storageService.downloadFile(fileName);
+	public ResponseEntity<ByteArrayResource> download(@PathVariable String fileName, @PathVariable String username) {
+
+		String folderName = userService.findUserByUsername(username).getParentFolder().getFolderId();
+		byte[] data = storageService.downloadFile(fileName, folderName);
 		ByteArrayResource rsc = new ByteArrayResource(data);
-		
-		storageService.getAllFile();
-		
+
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.contentLength(data.length)
@@ -75,9 +74,10 @@ public class SortifyStorageController {
 	 * @param fileName
 	 * @return HTTP Response 200 if deleted successfully
 	 */
-	@DeleteMapping("/delete/{fileName}")
-	public ResponseEntity<String> delete(@PathVariable String fileName) {
-		return new ResponseEntity<>(storageService.deleteFile(fileName), HttpStatus.OK);
+	@GetMapping("/delete/{fileName}")
+	public ResponseEntity<String> delete(@PathVariable String fileName, @PathVariable String username) {
+		String folderName = userService.findUserByUsername(username).getParentFolder().getFolderId();
+		return new ResponseEntity<>(storageService.deleteFile(fileName, folderName), HttpStatus.OK);
 	}
 
 	/**
@@ -85,21 +85,23 @@ public class SortifyStorageController {
 	 * @param username
 	 * @return Currently added folder
 	 */
-	@PostMapping("/addFolder")
+	@GetMapping("/addFolder")
 	public String createFolder(@PathVariable String username) {
 		SortifyUser user = userService.findUserByUsername(username);
 		SortifyFolder parentFolder = user.getParentFolder();
 
 
 		SortifySubFolder subFolder = new SortifySubFolder();
-		subFolder.setSubFolderId("test");
+		subFolder.setSubFolderId("test2");
 		subFolder.setParentFolder(parentFolder);
-		subFolder.setSubFolderName("testingName");
+		subFolder.setSubFolderName("testingName2");
 
 		parentFolder.addSubFolder(subFolder);
 
 		sortifyFolderService.addFolder(parentFolder);
 		return  parentFolder.getSubFolders().get(0).toString();
 	}
+
+
 
 }
