@@ -32,6 +32,12 @@ public class SortifyImage {
 		this.subFolder = subFolder;
 	}
 
+	public SortifyImage(String fileName, String fileType) {
+		super();
+		this.fileName = fileName;
+		this.fileType = fileType;
+	}
+
 	public String getFileName() {
 		return fileName;
 	}

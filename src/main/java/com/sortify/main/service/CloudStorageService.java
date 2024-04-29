@@ -1,13 +1,19 @@
 package com.sortify.main.service;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.lang.GeoLocation;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.GpsDirectory;
 import com.sortify.main.model.SortifyFolder;
 import com.sortify.main.model.SortifyUser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +28,7 @@ import com.amazonaws.services.s3.model.*;
 
 
 @Service
+@Slf4j
 public class CloudStorageService {
 	
 	@Value("${s3.bucket}")
@@ -30,15 +37,36 @@ public class CloudStorageService {
 	@Autowired
 	private AmazonS3 cloudClient;
 	
-	public String uploadFile(MultipartFile file, String folderName) {
+	public String uploadFile(MultipartFile file, String folderName) throws ImageProcessingException, IOException {
+		getImageCoordinates(file);
 		File uploadObject = toFile(file);
 		String fileName = folderName + "/" + file.getOriginalFilename();
 		cloudClient.putObject(new PutObjectRequest(s3BucketName, fileName, uploadObject));
+
 		uploadObject.delete();
 		return "File uploaded: " + fileName;
 		
 	}
-	
+
+	private double[] getImageCoordinates(MultipartFile file) throws IOException, ImageProcessingException {
+		InputStream inputStream = file.getInputStream();
+
+		Metadata metadata = ImageMetadataReader.readMetadata(inputStream);
+		log.info("A TRACE Message");
+		Collection<GpsDirectory> gpsDirectories = metadata.getDirectoriesOfType(GpsDirectory.class);
+		for (GpsDirectory gpsDirectory : gpsDirectories) {
+			// Try to read out the location, making sure it's non-zero
+			GeoLocation geoLocation = gpsDirectory.getGeoLocation();
+			if (geoLocation != null && !geoLocation.isZero()) {
+				// Add to our collection for use below
+
+				log.info(geoLocation.toString());
+
+				break;
+			}
+		}
+        return new double[0];
+    }
 	private File toFile(MultipartFile file) {
 		File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
 		

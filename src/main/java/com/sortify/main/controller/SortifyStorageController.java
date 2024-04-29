@@ -1,5 +1,6 @@
 package com.sortify.main.controller;
 
+import com.drew.imaging.ImageProcessingException;
 import com.sortify.main.model.SortifyFolder;
 import com.sortify.main.model.SortifySubFolder;
 import com.sortify.main.model.SortifyUser;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sortify.main.service.CloudStorageService;
 
+import java.io.IOException;
 import java.security.Principal;
 
 @RestController
@@ -44,7 +46,7 @@ public class SortifyStorageController {
 	 * @return HTTP Response 200 if uploaded successfully
 	 */
 	@PostMapping("/upload")
-	public ResponseEntity<String> upload(@RequestParam(value="file") MultipartFile file, @PathVariable String username) {
+	public ResponseEntity<String> upload(@RequestParam(value="file") MultipartFile file, @PathVariable String username) throws ImageProcessingException, IOException {
 		String folderName = userService.findUserByUsername(username).getParentFolder().getFolderId();
 		return new ResponseEntity<>(storageService.uploadFile(file, folderName),HttpStatus.OK);
 	}
