@@ -31,10 +31,8 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.disable()) // Disable CORS
                 .authorizeHttpRequests(auth -> {
                             // Allow sign up page to have no auth needed
-                            auth.requestMatchers(HttpMethod.POST,"/").permitAll();
-                            auth.requestMatchers(HttpMethod.GET,"/").permitAll();
-                            auth.requestMatchers(HttpMethod.POST,"/{username}/**").permitAll();
-//                            auth.requestMatchers("/{username}/**").access(new WebExpressionAuthorizationManager("#username == authentication.name"));
+                            auth.requestMatchers(HttpMethod.POST,"/signup").permitAll();
+                            auth.requestMatchers("/{username}/**").access(new WebExpressionAuthorizationManager("#username == authentication.name"));
                             auth.anyRequest().authenticated();
                         }
                 )

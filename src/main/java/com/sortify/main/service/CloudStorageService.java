@@ -52,7 +52,7 @@ public class CloudStorageService {
 		InputStream inputStream = file.getInputStream();
 
 		Metadata metadata = ImageMetadataReader.readMetadata(inputStream);
-		log.info("A TRACE Message");
+
 		Collection<GpsDirectory> gpsDirectories = metadata.getDirectoriesOfType(GpsDirectory.class);
 		for (GpsDirectory gpsDirectory : gpsDirectories) {
 			// Try to read out the location, making sure it's non-zero
