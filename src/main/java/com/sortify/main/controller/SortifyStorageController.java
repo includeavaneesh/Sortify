@@ -4,6 +4,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.sortify.main.model.SortifyFolder;
 import com.sortify.main.model.SortifySubFolder;
 import com.sortify.main.model.SortifyUser;
+import com.sortify.main.service.SortifyCloudStorageService;
 import com.sortify.main.service.SortifyFolderService;
 import com.sortify.main.service.SortifyUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.sortify.main.service.CloudStorageService;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -28,7 +27,7 @@ public class SortifyStorageController {
 	private SortifyFolderService sortifyFolderService;
 	
 	@Autowired
-	private CloudStorageService storageService;
+	private SortifyCloudStorageService storageService;
 
 	/**
 	 * This function is just to test the landing of /{username}/file endpoint

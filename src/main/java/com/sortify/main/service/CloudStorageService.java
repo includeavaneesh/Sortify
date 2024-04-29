@@ -3,13 +3,11 @@ package com.sortify.main.service;
 import java.io.*;
 import java.util.*;
 
+import ch.qos.logback.classic.Logger;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.GeoLocation;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.Tag;
-import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.sortify.main.model.SortifyFolder;
 import com.sortify.main.model.SortifyUser;
@@ -28,17 +26,19 @@ import com.amazonaws.services.s3.model.*;
 
 
 @Service
-@Slf4j
-public class CloudStorageService {
-	
+public class CloudStorageService implements SortifyCloudStorageService {
+
+	public static Logger log;
+
 	@Value("${s3.bucket}")
 	private String s3BucketName;
 	
 	@Autowired
 	private AmazonS3 cloudClient;
 	
+	@Override
 	public String uploadFile(MultipartFile file, String folderName) throws ImageProcessingException, IOException {
-		getImageCoordinates(file);
+		double[] coordinates = getImageCoordinates(file);
 		File uploadObject = toFile(file);
 		String fileName = folderName + "/" + file.getOriginalFilename();
 		cloudClient.putObject(new PutObjectRequest(s3BucketName, fileName, uploadObject));
@@ -48,38 +48,7 @@ public class CloudStorageService {
 		
 	}
 
-	private double[] getImageCoordinates(MultipartFile file) throws IOException, ImageProcessingException {
-		InputStream inputStream = file.getInputStream();
-
-		Metadata metadata = ImageMetadataReader.readMetadata(inputStream);
-
-		Collection<GpsDirectory> gpsDirectories = metadata.getDirectoriesOfType(GpsDirectory.class);
-		for (GpsDirectory gpsDirectory : gpsDirectories) {
-			// Try to read out the location, making sure it's non-zero
-			GeoLocation geoLocation = gpsDirectory.getGeoLocation();
-			if (geoLocation != null && !geoLocation.isZero()) {
-				// Add to our collection for use below
-
-				log.info(geoLocation.toString());
-
-				break;
-			}
-		}
-        return new double[0];
-    }
-	private File toFile(MultipartFile file) {
-		File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
-		
-		try (FileOutputStream fos = new FileOutputStream(convertedFile)){
-			fos.write(file.getBytes());
-
-		}
-		catch(IOException e){
-			System.out.println("Error in file");
-		}
-		return convertedFile;
-	}
-	
+	@Override
 	public byte[] downloadFile(String fileName, String folderName) {
 		S3Object s3Obj = cloudClient.getObject(s3BucketName, folderName + "/" + fileName);
 		S3ObjectInputStream inputStream = s3Obj.getObjectContent();
@@ -92,12 +61,14 @@ public class CloudStorageService {
 		return null;
 	}
 	
+	@Override
 	public String deleteFile(String fileName, String folderName) {
 		cloudClient.deleteObject(s3BucketName, folderName + "/" + fileName);
 		return "Removed: " + fileName;
 	}
 	
 	//temp func
+	@Override
 	public void getAllFile() {
 		//ListObjectsRequest listObjectRequest = new ListObjectsRequest().withBucketName(s3BucketName).withDelimiter("/").withPrefix("photos/");
 		S3Objects objects = S3Objects.withPrefix(cloudClient, s3BucketName,"photos/");
@@ -113,6 +84,7 @@ public class CloudStorageService {
 	/**
 	 * This function creates the main folder of the user
 	 */
+	@Override
 	public void createUserFolder(String userFolderName) {
 		// Assign prefix
 		userFolderName += "/";
@@ -129,6 +101,7 @@ public class CloudStorageService {
 	/**
 	 * This function deletes a bucket
 	 */
+	@Override
 	public void deleteUserFolder(String userFolderName) {
 		userFolderName += "/";
 		ObjectListing objectListing = cloudClient.listObjects(s3BucketName, userFolderName);
@@ -145,6 +118,7 @@ public class CloudStorageService {
 		cloudClient.deleteObject(s3BucketName,userFolderName);
 	}
 
+	@Override
 	public void createUserSubFolder(SortifyUser user) {
 		SortifyFolder parentFolder = user.getParentFolder();
 		String subFolder = "testSubFolder";

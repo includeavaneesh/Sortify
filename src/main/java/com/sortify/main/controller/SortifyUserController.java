@@ -1,8 +1,7 @@
 package com.sortify.main.controller;
 
-import com.sortify.main.model.SortifyFolder;
 import com.sortify.main.model.SortifyUser;
-import com.sortify.main.service.CloudStorageService;
+import com.sortify.main.service.SortifyCloudStorageService;
 import com.sortify.main.service.SortifyUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ public class SortifyUserController {
     private SortifyUserService server;
 
     @Autowired
-    private CloudStorageService storageService;
+    private SortifyCloudStorageService storageService;
 
 
     @GetMapping("")
