@@ -4,14 +4,10 @@ import java.io.*;
 import java.util.*;
 
 import ch.qos.logback.classic.Logger;
-import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
-import com.drew.lang.GeoLocation;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.GpsDirectory;
 import com.sortify.main.model.SortifyFolder;
 import com.sortify.main.model.SortifyUser;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
