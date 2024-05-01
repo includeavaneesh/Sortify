@@ -2,6 +2,7 @@ package com.sortify.main.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "SORTIFY_CHILD_FOLDER")
@@ -16,8 +17,9 @@ public class SortifySubFolder {
     @JoinColumn(name = "folderId")
     private SortifyFolder parentFolder;
 
-//    @OneToMany(mappedBy = "subFolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<SortifyImage> imageList;
+    @OneToMany(mappedBy = "subFolder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SortifyImage> imageList = new ArrayList<>();
+
 
     public SortifySubFolder() {
         this(null,null,null);

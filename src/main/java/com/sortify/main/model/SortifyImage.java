@@ -14,7 +14,8 @@ public class SortifyImage {
 	private double geoLocationY;
 	private String imageUrl;
 	private Date dateCreated;
-	@ManyToOne
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "subFolderId")
 	private SortifySubFolder subFolder;
 
