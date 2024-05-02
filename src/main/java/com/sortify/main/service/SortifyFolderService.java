@@ -5,6 +5,6 @@ import com.sortify.main.model.SortifySubFolder;
 
 public interface SortifyFolderService {
     void addFolder(SortifyFolder folder);
-    void deleteSubFolder(SortifySubFolder SubFolderId);
-    SortifySubFolder findSubFolder(String username);
+    void deleteFolder(String SubFolderId);
+    SortifyFolder findFolder(String username);
 }
