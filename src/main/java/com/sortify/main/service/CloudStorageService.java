@@ -6,6 +6,7 @@ import java.util.*;
 import ch.qos.logback.classic.Logger;
 import com.drew.imaging.ImageProcessingException;
 import com.sortify.main.model.SortifyFolder;
+import com.sortify.main.model.SortifyImage;
 import com.sortify.main.model.SortifyUser;
 
 import org.springframework.beans.factory.annotation.*;
@@ -26,6 +27,9 @@ public class CloudStorageService implements SortifyCloudStorageService {
 
 	public static Logger log;
 
+	@Autowired
+	private SortifySubFolderService subFolderService;
+
 	@Value("${s3.bucket}")
 	private String s3BucketName;
 	
@@ -35,8 +39,16 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	@Override
 	public String uploadFile(MultipartFile file, String folderName) throws ImageProcessingException, IOException {
 		double[] coordinates = getImageCoordinates(file);
+		String imageFileName = file.getOriginalFilename();
+
+		SortifyImage image = new SortifyImage();
+		image.setFileName(imageFileName);
+		image.setGeoLocationX(coordinates[0]);
+		image.setGeoLocationX(coordinates[1]);
+
+
 		File uploadObject = toFile(file);
-		String fileName = folderName + "/" + file.getOriginalFilename();
+		String fileName = folderName + "/" + imageFileName;
 		cloudClient.putObject(new PutObjectRequest(s3BucketName, fileName, uploadObject));
 
 		uploadObject.delete();
