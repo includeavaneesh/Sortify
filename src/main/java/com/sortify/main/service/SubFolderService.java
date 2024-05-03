@@ -1,7 +1,9 @@
 package com.sortify.main.service;
 
+import com.sortify.main.model.SortifyFolder;
 import com.sortify.main.model.SortifySubFolder;
 import com.sortify.main.repository.SortifySubFolderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,7 +11,11 @@ import java.util.ArrayList;
 @Service
 public class SubFolderService implements SortifySubFolderService{
 
+    @Autowired
     SortifySubFolderRepository subFolderRepository;
+
+    @Autowired
+    SortifyFolderService folderService;
     @Override
     public void saveSubFolder(SortifySubFolder subFolder) {
         subFolderRepository.save(subFolder);
@@ -30,12 +36,19 @@ public class SubFolderService implements SortifySubFolderService{
 
     @Override
     public ArrayList<SortifySubFolder> getAllSubFolder(String folderId) {
-        ArrayList<SortifySubFolder> subFolderList = new ArrayList<>();
-        return subFolderList;
+        return (ArrayList<SortifySubFolder>) folderService.findFolder(folderId).getSubFolders();
     }
 
     @Override
     public void deleteAllSubFolder(String folderId) {
+        SortifyFolder folder = folderService.findFolder(folderId);
+        ArrayList<SortifySubFolder> subFolderList = (ArrayList<SortifySubFolder>) folder.getSubFolders();
 
+        if(!subFolderList.isEmpty()) {
+            subFolderRepository.deleteAll(subFolderList);
+        }
+
+        folder.setSubFolders(new ArrayList<>());
+        folderService.addFolder(folder);
     }
 }
