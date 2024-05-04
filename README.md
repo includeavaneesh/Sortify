@@ -42,6 +42,8 @@ metadata to help you manage your images!
 
 ## 🔮 Future Plans...
 
+* Integeration with Google Maps allowing you to pinpoint exact location of your images.
+* Share your images with your friends.
 ## 🤝 Contributions
 
 - Feel Free to Open a PR/Issue for any feature or bug(s).
@@ -53,6 +55,6 @@ metadata to help you manage your images!
 
 Copyright 2023 Avaneesh Kanshi
 
-Licensed under MIT License : https://opensource.org/licenses/MIT
+Licensed under <a href="https://opensource.org/licenses/MIT">MIT License</a>
 
 <p align="center">Made with ♥️ and a single cup of coffee</p>
