@@ -29,9 +29,18 @@ to a cloud server, allowing you to access your data anytime anywhere (thanks to 
 * None of your data can be accessed by anyone except you. However, the service makes use of
 metadata to help you manage your images!
 
-## Get Started!
+## ⚙️ Tech Stack
+><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/java/java-original.svg" alt="java" width="60" height="60"/> 
+><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" alt="postgresql" width="60" height="60"/>
+><img src="https://www.vectorlogo.zone/logos/springio/springio-icon.svg" alt="spring" width="60" height="60"/>
+><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" alt="aws" width="60" height="60"/>
 
-## Future Plans...
+* Java and Spring Boot for Backend Services
+* PostgreSQL for Metadata management
+* AWS for Cloud services
+## 🏃🏼 Get Started!
+
+## 🔮 Future Plans...
 
 ## 🤝 Contributions
 
