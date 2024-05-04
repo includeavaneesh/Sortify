@@ -8,6 +8,5 @@ public interface SortifySubFolderService {
     void saveSubFolder(SortifySubFolder subFolder);
     void deleteSubFolder(String subFolderId);
     SortifySubFolder findSubFolder(String subFolderId);
-    ArrayList<SortifySubFolder> getAllSubFolder(String folderId);
     void deleteAllSubFolder(String folderId);
 }

@@ -35,20 +35,20 @@ public class SubFolderService implements SortifySubFolderService{
     }
 
     @Override
-    public ArrayList<SortifySubFolder> getAllSubFolder(String folderId) {
-        return (ArrayList<SortifySubFolder>) folderService.findFolder(folderId).getSubFolders();
-    }
-
-    @Override
     public void deleteAllSubFolder(String folderId) {
         SortifyFolder folder = folderService.findFolder(folderId);
-        ArrayList<SortifySubFolder> subFolderList = (ArrayList<SortifySubFolder>) folder.getSubFolders();
+        ArrayList<SortifySubFolder> subFolderList = new ArrayList<>();
+        if(folder != null) {
+            subFolderList = (ArrayList<SortifySubFolder>) folder.getSubFolders();
+            if(!subFolderList.isEmpty()) {
+                subFolderRepository.deleteAll(subFolderList);
+            }
 
-        if(!subFolderList.isEmpty()) {
-            subFolderRepository.deleteAll(subFolderList);
+            folder.setSubFolders(new ArrayList<>());
+            folderService.addFolder(folder);
         }
 
-        folder.setSubFolders(new ArrayList<>());
-        folderService.addFolder(folder);
     }
+
+
 }
