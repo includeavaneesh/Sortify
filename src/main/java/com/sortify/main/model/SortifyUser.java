@@ -24,7 +24,7 @@ public class SortifyUser {
 
 	private String userLastName;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinTable(name="User_Folder",
 	joinColumns = @JoinColumn(name = "username"),
 			inverseJoinColumns = @JoinColumn(name = "folder_id")
