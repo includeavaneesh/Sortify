@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 import ch.qos.logback.classic.Logger;
+import com.amazonaws.HttpMethod;
 import com.drew.imaging.ImageProcessingException;
 import com.sortify.main.model.SortifyFolder;
 import com.sortify.main.model.SortifyImage;
@@ -66,7 +67,18 @@ public class CloudStorageService implements SortifyCloudStorageService {
 		String fileName = folderName + "/" + imageFileName;
 
 		S3_CLOUD_CLIENT.putObject(new PutObjectRequest(S3_BUCKET_NAME, fileName, uploadObject));
-		URL s3URL = S3_CLOUD_CLIENT.getUrl(S3_BUCKET_NAME, fileName);
+
+//		Get pre signed URL
+		Date expiration = new Date();
+		long expTimeMillis = expiration.getTime();
+		expTimeMillis += 1000 * 60 * 60; // 1 hour timeout
+		expiration.setTime(expTimeMillis);
+
+		GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(S3_BUCKET_NAME, fileName)
+				.withMethod(HttpMethod.GET)
+				.withExpiration(expiration);
+
+		URL s3URL = S3_CLOUD_CLIENT.generatePresignedUrl(generatePresignedUrlRequest);
 		boolean isDeleted = uploadObject.delete();
 		if(!isDeleted) {
 			return "File could not be uploaded: " + fileName;
@@ -90,6 +102,7 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	
 	@Override
 	public String deleteFile(String fileName, String folderName) {
+		IMAGE_SERVICE.deleteImage(fileName);
 		S3_CLOUD_CLIENT.deleteObject(S3_BUCKET_NAME, folderName + "/" + fileName);
 		return "Removed: " + fileName;
 	}
