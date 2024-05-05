@@ -1,5 +1,6 @@
 package com.sortify.main.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,8 +30,9 @@ public class SortifyUser {
 	joinColumns = @JoinColumn(name = "username"),
 			inverseJoinColumns = @JoinColumn(name = "folder_id")
 	)
-
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private SortifyFolder parentFolder;
+
 	public SortifyUser() {
 
 	}

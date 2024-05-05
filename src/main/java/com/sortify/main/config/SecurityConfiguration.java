@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,17 +28,16 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF
-                .cors(cors -> cors.disable()) // Disable CORS
                 .authorizeHttpRequests(auth -> {
                             // Allow sign up page to have no auth needed
                             auth.requestMatchers(HttpMethod.POST,"/signup").permitAll();
-                            auth.requestMatchers("/{username}/**").access(new WebExpressionAuthorizationManager("#username == authentication.name"));
                             auth.anyRequest().authenticated();
                         }
                 )
                 .userDetailsService(jpaUserDetailsService)
                 .formLogin(withDefaults())
+                .httpBasic(withDefaults())
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF
                 .build();
     }
 

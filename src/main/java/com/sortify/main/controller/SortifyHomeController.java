@@ -58,18 +58,25 @@ public class SortifyHomeController {
     }
 
     @DeleteMapping("/deleteUser")
-    public String deleteUser(@RequestBody SortifyUser user) {
+    public ResponseEntity<?> deleteUser(@RequestBody SortifyUser user) {
 
-        storageService.deleteUserFolder(user.getUsername());
+//        storageService.deleteUserFolder(user.getUsername());
 
         String username = user.getUsername();
         if(server.findUserByUsername(username) != null){
             server.deleteUser(username);
-            return "Deleted";
+            return ResponseEntity.status(HttpStatus.OK).body("User with username " + username + " has been deleted.");
         }
 
-        return "Doesnt exist";
+        return ResponseEntity.status(HttpStatus.OK).body("User with username " + username + " does not exist.");
 
+
+    }
+
+    @PostMapping("/getUser")
+    public ResponseEntity<?> getUser(@RequestBody SortifyUser user) {
+        SortifyUser userFound = server.findUserByUsername(user.getUsername());
+        return ResponseEntity.ok().body(userFound);
     }
 
     @PostMapping("/login")
