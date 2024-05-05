@@ -119,9 +119,12 @@ public class SortifyStorageController {
 	@GetMapping("/getFolder")
 	public ResponseEntity<?> getSubFolder(@RequestBody SortifySubFolder subFolder) {
 		String subFolderId = subFolder.getSubFolderId();
-		return ResponseEntity.ok().body(sortifySubFolderService.findSubFolder(subFolderId));
+		SortifySubFolder retrievedSubFolder = sortifySubFolderService.findSubFolder(subFolderId);
+		if(retrievedSubFolder != null){
+			return ResponseEntity.ok().body(sortifySubFolderService.findSubFolder(subFolderId).getImageList());
+		}
+		else{
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
 	}
-
-
-
 }
