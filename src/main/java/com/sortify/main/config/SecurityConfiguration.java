@@ -36,8 +36,8 @@ public class SecurityConfiguration {
                 )
                 .userDetailsService(jpaUserDetailsService)
                 .formLogin(withDefaults())
-                .httpBasic(withDefaults())
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF
+                .httpBasic(withDefaults()) // Disable in Prod
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF - Enable in Prod
                 .build();
     }
 

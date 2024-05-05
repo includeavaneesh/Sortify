@@ -27,11 +27,15 @@ public class SortifyUserController {
     }
 
 
-    @GetMapping("/delete")
-    public void removeUser(Principal principal) {
-        String username = principal.getName();
-        storageService.deleteUserFolder(username);
-        server.deleteUser(username);
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> removeUser(@PathVariable String username) {
+
+        if(server.findUserByUsername(username)!=null) {
+            storageService.deleteUserFolder(username);
+            server.deleteUser(username);
+            return ResponseEntity.ok().body("User with " + username + " successfully removed.");
+        }
+        return ResponseEntity.ok().body("User with " + username + " does not exist.");
     }
 
     @PatchMapping(path = "/update")
