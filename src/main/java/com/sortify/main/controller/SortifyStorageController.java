@@ -16,9 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/{username}/file")
+@RequestMapping("/{username}")
 public class SortifyStorageController {
 	@Autowired
 	private SortifyUserService userService;
@@ -34,7 +35,7 @@ public class SortifyStorageController {
 	 * @param principal
 	 * @return Current logged in user
 	 */
-	@GetMapping("")
+	@GetMapping("/access")
 	public String testPage(Principal principal) {
 		return "This is accessed by: " + principal.toString();
 	}
@@ -87,20 +88,25 @@ public class SortifyStorageController {
 	 * @return Currently added folder
 	 */
 	@GetMapping("/addFolder")
-	public String createFolder(@PathVariable String username) {
+	public ResponseEntity<?> createFolder(@PathVariable String username) {
 		SortifyUser user = userService.findUserByUsername(username);
 		SortifyFolder parentFolder = user.getParentFolder();
 
 
 		SortifySubFolder subFolder = new SortifySubFolder();
-		subFolder.setSubFolderId("test2");
+		subFolder.setSubFolderId("testFolder");
 		subFolder.setParentFolder(parentFolder);
-		subFolder.setSubFolderName("testingName2");
+		subFolder.setSubFolderName("testingName");
 
 		parentFolder.addSubFolder(subFolder);
-
 		sortifyFolderService.addFolder(parentFolder);
-		return  parentFolder.getSubFolders().get(0).toString();
+		return ResponseEntity.ok().body(user);
+	}
+
+	@GetMapping("/allFolder")
+	public ResponseEntity<?> getAllSubFolder(@PathVariable String username) {
+		String folderId = userService.findUserByUsername(username).getParentFolder().getFolderId();
+		return ResponseEntity.ok().body(sortifyFolderService.getAllSubFolder(folderId));
 	}
 
 

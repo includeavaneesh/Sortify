@@ -6,7 +6,7 @@ import com.sortify.main.repository.SortifyFolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class FolderService implements SortifyFolderService{
@@ -37,10 +37,10 @@ public class FolderService implements SortifyFolderService{
     }
 
     @Override
-    public ArrayList<SortifySubFolder> getAllSubFolder(String folderId) {
-        if(sortifyFolderRepository.findById(folderId).isPresent())
-            return (ArrayList<SortifySubFolder>) sortifyFolderRepository.findById(folderId).get().getSubFolders();
-        return new ArrayList<>();
+    public List<SortifySubFolder> getAllSubFolder(String folderId) {
+
+        return sortifyFolderRepository.findById(folderId).get().getSubFolders();
+
     }
 
 
