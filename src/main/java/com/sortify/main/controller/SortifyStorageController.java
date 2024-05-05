@@ -17,22 +17,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/{username}")
 public class SortifyStorageController {
 	@Autowired
-	private SortifyUserService userService;
+	private SortifyUserService USER_SERVICE;
 
 	@Autowired
-	private SortifyFolderService sortifyFolderService;
+	private SortifyFolderService FOLDER_SERVICE;
 
 	@Autowired
-	private SortifySubFolderService sortifySubFolderService;
+	private SortifySubFolderService SUBFOLDER_SERVICE;
 	
 	@Autowired
-	private SortifyCloudStorageService storageService;
+	private SortifyCloudStorageService CLOUD_SERVICE;
 
 	/**
 	 * This function is just to test the landing of /{username}/file endpoint
@@ -51,8 +50,8 @@ public class SortifyStorageController {
 	 */
 	@PostMapping("/upload")
 	public ResponseEntity<String> upload(@RequestParam(value="file") MultipartFile file, @PathVariable String username) throws ImageProcessingException, IOException {
-		String folderName = userService.findUserByUsername(username).getParentFolder().getFolderId();
-		return new ResponseEntity<>(storageService.uploadFile(file, folderName),HttpStatus.OK);
+		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
+		return new ResponseEntity<>(CLOUD_SERVICE.uploadFile(file, folderName),HttpStatus.OK);
 	}
 
 	/**
@@ -63,8 +62,8 @@ public class SortifyStorageController {
 	@GetMapping("/download/{fileName}")
 	public ResponseEntity<ByteArrayResource> download(@PathVariable String fileName, @PathVariable String username) {
 
-		String folderName = userService.findUserByUsername(username).getParentFolder().getFolderId();
-		byte[] data = storageService.downloadFile(fileName, folderName);
+		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
+		byte[] data = CLOUD_SERVICE.downloadFile(fileName, folderName);
 		ByteArrayResource rsc = new ByteArrayResource(data);
 
 		return ResponseEntity
@@ -82,8 +81,8 @@ public class SortifyStorageController {
 	 */
 	@GetMapping("/delete/{fileName}")
 	public ResponseEntity<String> delete(@PathVariable String fileName, @PathVariable String username) {
-		String folderName = userService.findUserByUsername(username).getParentFolder().getFolderId();
-		return new ResponseEntity<>(storageService.deleteFile(fileName, folderName), HttpStatus.OK);
+		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
+		return new ResponseEntity<>(CLOUD_SERVICE.deleteFile(fileName, folderName), HttpStatus.OK);
 	}
 
 	/**
@@ -93,7 +92,7 @@ public class SortifyStorageController {
 	 */
 	@GetMapping("/addFolder")
 	public ResponseEntity<?> createFolder(@PathVariable String username) {
-		SortifyUser user = userService.findUserByUsername(username);
+		SortifyUser user = USER_SERVICE.findUserByUsername(username);
 		SortifyFolder parentFolder = user.getParentFolder();
 
 
@@ -104,24 +103,24 @@ public class SortifyStorageController {
 
 		parentFolder.addSubFolder(subFolder);
 
-		sortifyFolderService.addFolder(parentFolder);
+		FOLDER_SERVICE.addFolder(parentFolder);
 
-		storageService.createUserFolder(parentFolder.getFolderId() + "/testingName");
-		return ResponseEntity.ok().body(sortifySubFolderService.findSubFolder("testFolder"));
+		CLOUD_SERVICE.createUserFolder(parentFolder.getFolderId() + "/testingName");
+		return ResponseEntity.ok().body(SUBFOLDER_SERVICE.findSubFolder("testFolder"));
 	}
 
 	@GetMapping("/allFolder")
 	public ResponseEntity<?> getAllSubFolder(@PathVariable String username) {
-		String folderId = userService.findUserByUsername(username).getParentFolder().getFolderId();
-		return ResponseEntity.ok().body(sortifyFolderService.getAllSubFolder(folderId));
+		String folderId = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
+		return ResponseEntity.ok().body(FOLDER_SERVICE.getAllSubFolder(folderId));
 	}
 
 	@GetMapping("/getFolder")
 	public ResponseEntity<?> getSubFolder(@RequestBody SortifySubFolder subFolder) {
 		String subFolderId = subFolder.getSubFolderId();
-		SortifySubFolder retrievedSubFolder = sortifySubFolderService.findSubFolder(subFolderId);
+		SortifySubFolder retrievedSubFolder = SUBFOLDER_SERVICE.findSubFolder(subFolderId);
 		if(retrievedSubFolder != null){
-			return ResponseEntity.ok().body(sortifySubFolderService.findSubFolder(subFolderId).getImageList());
+			return ResponseEntity.ok().body(SUBFOLDER_SERVICE.findSubFolder(subFolderId).getImageList());
 		}
 		else{
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
