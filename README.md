@@ -48,7 +48,7 @@ metadata to help you manage your images!
 
 - Feel Free to Open a PR/Issue for any feature or bug(s).
 - Make sure you follow the [community guidelines](https://docs.github.com/en/github/site-policy/github-community-guidelines).
-- Feel free to open an issue to ask a question/discuss anything about G-unfollower.
+- Feel free to open an issue to ask a question/discuss anything about Sortify.
 - Have a feature request? Open an Issue!
 
 ## ⚖️ License
