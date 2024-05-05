@@ -1,5 +1,6 @@
 package com.sortify.main.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -15,6 +16,7 @@ public class SortifyImage {
 	private String imageUrl;
 	private Date dateCreated;
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "subFolderId")
 	private SortifySubFolder subFolder;

@@ -100,7 +100,7 @@ public class SortifyStorageController {
 
 		parentFolder.addSubFolder(subFolder);
 		sortifyFolderService.addFolder(parentFolder);
-		return ResponseEntity.ok().body(user);
+		return ResponseEntity.ok().body(subFolder);
 	}
 
 	@GetMapping("/allFolder")

@@ -1,5 +1,6 @@
 package com.sortify.main.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -13,10 +14,12 @@ public class SortifySubFolder {
     @Column(nullable = false)
     private String subFolderName;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "folderId")
     private SortifyFolder parentFolder;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "subFolder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SortifyImage> imageList = new ArrayList<>();
 

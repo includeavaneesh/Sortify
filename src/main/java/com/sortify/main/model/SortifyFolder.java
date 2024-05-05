@@ -17,6 +17,8 @@ public class SortifyFolder {
     @JsonIgnore
     @OneToOne(mappedBy = "parentFolder")
     private SortifyUser user;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "parentFolder",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SortifySubFolder> subFolders = new ArrayList<SortifySubFolder>();
 
