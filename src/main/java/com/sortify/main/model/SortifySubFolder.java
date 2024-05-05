@@ -66,6 +66,10 @@ public class SortifySubFolder {
         this.imageList = imageList;
     }
 
+    public void addImage(SortifyImage image) {
+        this.imageList.add(image);
+    }
+
     @Override
     public String toString() {
         return "SortifySubFolder{" +

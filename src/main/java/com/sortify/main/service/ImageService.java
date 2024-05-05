@@ -2,6 +2,7 @@ package com.sortify.main.service;
 
 import com.sortify.main.model.SortifyImage;
 import com.sortify.main.repository.SortifyImageRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

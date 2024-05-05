@@ -1,14 +1,19 @@
 package com.sortify.main.service;
 
 import java.io.*;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import ch.qos.logback.classic.Logger;
 import com.drew.imaging.ImageProcessingException;
 import com.sortify.main.model.SortifyFolder;
 import com.sortify.main.model.SortifyImage;
+import com.sortify.main.model.SortifySubFolder;
 import com.sortify.main.model.SortifyUser;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,27 +37,41 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	
 	@Autowired
 	private AmazonS3 S3_CLOUD_CLIENT;
+
+	@Autowired
+	private SortifySubFolderService SUBFOLDER_SERVICE;
+
+	@Autowired
+	private SortifyImageService IMAGE_SERVICE;
 	
 	@Override
 	public String uploadFile(MultipartFile file, String folderName) throws ImageProcessingException, IOException {
 		double[] coordinates = getImageCoordinates(file);
 		String imageFileName = file.getOriginalFilename();
 
+		String subFolderId = "testFolder";
+		SortifySubFolder subFolder = SUBFOLDER_SERVICE.findSubFolder(subFolderId);
+
 		SortifyImage image = new SortifyImage();
 		image.setFileName(imageFileName);
 		image.setGeoLocationX(coordinates[0]);
 		image.setGeoLocationX(coordinates[1]);
+		image.setDateCreated(new Date());
+		image.setFileType("jpg");
+		image.setSubFolder(subFolder);
 
+		IMAGE_SERVICE.saveImage(image);
 
 		File uploadObject = toFile(file);
 		String fileName = folderName + "/" + imageFileName;
-		S3_CLOUD_CLIENT.putObject(new PutObjectRequest(S3_BUCKET_NAME, fileName, uploadObject));
 
+		S3_CLOUD_CLIENT.putObject(new PutObjectRequest(S3_BUCKET_NAME, fileName, uploadObject));
+		URL s3URL = S3_CLOUD_CLIENT.getUrl(S3_BUCKET_NAME, fileName);
 		boolean isDeleted = uploadObject.delete();
 		if(!isDeleted) {
 			return "File could not be uploaded: " + fileName;
 		}
-		return "File uploaded successfully: " + fileName;
+		return "File uploaded successfully: " + fileName + " at " + s3URL;
 		
 	}
 
