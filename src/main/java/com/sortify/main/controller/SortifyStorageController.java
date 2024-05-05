@@ -6,6 +6,7 @@ import com.sortify.main.model.SortifySubFolder;
 import com.sortify.main.model.SortifyUser;
 import com.sortify.main.service.SortifyCloudStorageService;
 import com.sortify.main.service.SortifyFolderService;
+import com.sortify.main.service.SortifySubFolderService;
 import com.sortify.main.service.SortifyUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -26,6 +27,9 @@ public class SortifyStorageController {
 
 	@Autowired
 	private SortifyFolderService sortifyFolderService;
+
+	@Autowired
+	private SortifySubFolderService sortifySubFolderService;
 	
 	@Autowired
 	private SortifyCloudStorageService storageService;
@@ -99,14 +103,23 @@ public class SortifyStorageController {
 		subFolder.setSubFolderName("testingName");
 
 		parentFolder.addSubFolder(subFolder);
+
 		sortifyFolderService.addFolder(parentFolder);
-		return ResponseEntity.ok().body(subFolder);
+
+		storageService.createUserFolder(parentFolder.getFolderId() + "/testingName");
+		return ResponseEntity.ok().body(sortifySubFolderService.findSubFolder("testFolder"));
 	}
 
 	@GetMapping("/allFolder")
 	public ResponseEntity<?> getAllSubFolder(@PathVariable String username) {
 		String folderId = userService.findUserByUsername(username).getParentFolder().getFolderId();
 		return ResponseEntity.ok().body(sortifyFolderService.getAllSubFolder(folderId));
+	}
+
+	@GetMapping("/getFolder")
+	public ResponseEntity<?> getSubFolder(@RequestBody SortifySubFolder subFolder) {
+		String subFolderId = subFolder.getSubFolderId();
+		return ResponseEntity.ok().body(sortifySubFolderService.findSubFolder(subFolderId));
 	}
 
 

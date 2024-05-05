@@ -9,9 +9,8 @@ import java.util.List;
 @Entity(name = "SORTIFY_CHILD_FOLDER")
 public class SortifySubFolder {
     @Id
-    @Column(nullable = false)
     private String subFolderId;
-    @Column(nullable = false)
+
     private String subFolderName;
 
     @JsonIgnore
@@ -59,13 +58,13 @@ public class SortifySubFolder {
         this.parentFolder = parentFolder;
     }
 
-//    public List<SortifyImage> getImageList() {
-//        return imageList;
-//    }
-//
-//    public void setImageList(List<SortifyImage> imageList) {
-//        this.imageList = imageList;
-//    }
+    public List<SortifyImage> getImageList() {
+        return imageList;
+    }
+
+    public void setImageList(List<SortifyImage> imageList) {
+        this.imageList = imageList;
+    }
 
     @Override
     public String toString() {

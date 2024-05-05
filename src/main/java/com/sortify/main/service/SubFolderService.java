@@ -3,12 +3,15 @@ package com.sortify.main.service;
 import com.sortify.main.model.SortifyFolder;
 import com.sortify.main.model.SortifySubFolder;
 import com.sortify.main.repository.SortifySubFolderRepository;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Service
+@Slf4j
 public class SubFolderService implements SortifySubFolderService{
 
     @Autowired
@@ -28,10 +31,14 @@ public class SubFolderService implements SortifySubFolderService{
 
     @Override
     public SortifySubFolder findSubFolder(String subFolderId) {
+
         if(subFolderRepository.findById(subFolderId).isPresent()) {
-            subFolderRepository.findById(subFolderId).get();
+            return subFolderRepository.findById(subFolderId).get();
         }
-        return null;
+        else{
+            return null;
+        }
+
     }
 
     @Override
