@@ -48,8 +48,11 @@ public class CloudStorageService implements SortifyCloudStorageService {
 		String fileName = folderName + "/" + imageFileName;
 		S3_CLOUD_CLIENT.putObject(new PutObjectRequest(S3_BUCKET_NAME, fileName, uploadObject));
 
-		uploadObject.delete();
-		return "File uploaded: " + fileName;
+		boolean isDeleted = uploadObject.delete();
+		if(!isDeleted) {
+			return "File could not be uploaded: " + fileName;
+		}
+		return "File uploaded successfully: " + fileName;
 		
 	}
 
