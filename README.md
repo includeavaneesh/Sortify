@@ -38,6 +38,9 @@ metadata to help you manage your images!
 * Java and Spring Boot for Backend Services
 * PostgreSQL for Metadata management
 * AWS for Cloud services
+
+### 🏗️ Sortify's Architecture
+![architecture.svg](assets%2Farchitecture.svg)
 ## 🏃🏼 Get Started!
 
 ## 🔮 Future Plans...
