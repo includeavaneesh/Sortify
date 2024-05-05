@@ -8,31 +8,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/{username}")
 public class SortifyUserController {
     @Autowired
-    private SortifyUserService server;
+    private SortifyUserService USER_SERVICE;
 
     @Autowired
-    private SortifyCloudStorageService storageService;
+    private SortifyCloudStorageService CLOUD_SERVICE;
 
 
     @GetMapping("")
     public SortifyUser getUser(@PathVariable String username) {
-        return server.findUserByUsername(username);
+        return USER_SERVICE.findUserByUsername(username);
     }
 
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> removeUser(@PathVariable String username) {
 
-        if(server.findUserByUsername(username)!=null) {
-            storageService.deleteUserFolder(username);
-            server.deleteUser(username);
+        if(USER_SERVICE.findUserByUsername(username)!=null) {
+            CLOUD_SERVICE.deleteUserFolder(username);
+            USER_SERVICE.deleteUser(username);
             return ResponseEntity.ok().body("User with " + username + " successfully removed.");
         }
         return ResponseEntity.ok().body("User with " + username + " does not exist.");
@@ -44,10 +43,10 @@ public class SortifyUserController {
             @RequestBody SortifyUser modifiedUser) {
 
         try {
-            SortifyUser originalUser = server.findUserByUsername(username);
+            SortifyUser originalUser = USER_SERVICE.findUserByUsername(username);
 
             if (originalUser != null) {
-                originalUser = server.modifyUser(username, modifiedUser);
+                originalUser = USER_SERVICE.modifyUser(username, modifiedUser);
                 return ResponseEntity.status(HttpStatus.OK).body(originalUser);
             }
 
@@ -63,7 +62,7 @@ public class SortifyUserController {
 
     @GetMapping("/allUsers")
     public ArrayList<SortifyUser> getAllUsers() {
-        return server.retrieveAll();
+        return USER_SERVICE.retrieveAll();
     }
 
 }

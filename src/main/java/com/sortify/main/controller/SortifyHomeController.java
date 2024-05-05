@@ -20,10 +20,10 @@ import com.sortify.main.service.SortifyUserService;
 public class SortifyHomeController {
 
     @Autowired
-    private SortifyUserService server;
+    private SortifyUserService USER_SERVICE;
 
     @Autowired
-    private SortifyCloudStorageService storageService;
+    private SortifyCloudStorageService CLOUD_SERVICE;
 
 
     @GetMapping("")
@@ -36,7 +36,7 @@ public class SortifyHomeController {
     public ResponseEntity<?> signUpUser(@RequestBody SortifyUser user) {
 
         //Check if the user with the same username exists or not
-        if(server.findUserByUsername(user.getUsername()) == null){
+        if(USER_SERVICE.findUserByUsername(user.getUsername()) == null){
             // Assign a unique parent folder to user (folder ID = username)
             SortifyFolder newFolder = new SortifyFolder();
             newFolder.setUser(user);
@@ -45,11 +45,11 @@ public class SortifyHomeController {
             user.setParentFolder(newFolder);
 
             // Create a folder in S3 Bucket with S3 folder name = folder ID
-            storageService.createUserFolder(newFolder.getFolderId());
+            CLOUD_SERVICE.createUserFolder(newFolder.getFolderId());
             // Add user to database
-            server.addUser(user);
+            USER_SERVICE.addUser(user);
             // Return added user
-            return ResponseEntity.ok().body(server.findUserByUsername(user.getUsername()));
+            return ResponseEntity.ok().body(USER_SERVICE.findUserByUsername(user.getUsername()));
         }
 
         return ResponseEntity.status(HttpStatus.CONFLICT)

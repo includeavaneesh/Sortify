@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -18,10 +17,10 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    private final JpaUserDetailsService jpaUserDetailsService;
+    private final JpaUserDetailsService USER_DETAIL_SERVICE;
 
-    public SecurityConfiguration(JpaUserDetailsService jpaUserDetailsService) {
-        this.jpaUserDetailsService = jpaUserDetailsService;
+    public SecurityConfiguration(JpaUserDetailsService USER_DETAIL_SERVICE) {
+        this.USER_DETAIL_SERVICE = USER_DETAIL_SERVICE;
     }
 
 
@@ -34,7 +33,7 @@ public class SecurityConfiguration {
                             auth.anyRequest().authenticated();
                         }
                 )
-                .userDetailsService(jpaUserDetailsService)
+                .userDetailsService(USER_DETAIL_SERVICE)
                 .formLogin(withDefaults())
                 .httpBasic(withDefaults()) // Disable in Prod
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF - Enable in Prod
