@@ -12,26 +12,26 @@ import java.util.List;
 public class FolderService implements SortifyFolderService{
 
     @Autowired
-    private SortifyFolderRepository sortifyFolderRepository;
+    private SortifyFolderRepository FOLDER_REPOSITORY;
     @Autowired
-    private SortifyUserService userService;
+    private SortifyUserService USER_SERVICE;
 
     @Override
     public void addFolder(SortifyFolder folder) {
-        sortifyFolderRepository.save(folder);
+        FOLDER_REPOSITORY.save(folder);
     }
 
     @Override
     public void deleteFolder(String folderId) {
-        sortifyFolderRepository.deleteById(folderId);
+        FOLDER_REPOSITORY.deleteById(folderId);
     }
 
     @Override
     public SortifyFolder findFolder(String username) {
-        String folderId = userService.findUserByUsername(username).getParentFolder().getFolderId();
+        String folderId = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
 
-        if(sortifyFolderRepository.findById(folderId).isPresent()) {
-            return sortifyFolderRepository.findById(folderId).get();
+        if(FOLDER_REPOSITORY.findById(folderId).isPresent()) {
+            return FOLDER_REPOSITORY.findById(folderId).get();
         }
         return null;
     }
@@ -39,7 +39,7 @@ public class FolderService implements SortifyFolderService{
     @Override
     public List<SortifySubFolder> getAllSubFolder(String folderId) {
 
-        return sortifyFolderRepository.findById(folderId).get().getSubFolders();
+        return FOLDER_REPOSITORY.findById(folderId).get().getSubFolders();
 
     }
 

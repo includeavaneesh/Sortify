@@ -27,14 +27,11 @@ public class CloudStorageService implements SortifyCloudStorageService {
 
 	public static Logger log;
 
-	@Autowired
-	private SortifySubFolderService subFolderService;
-
 	@Value("${s3.bucket}")
-	private String s3BucketName;
+	private String S3_BUCKET_NAME;
 	
 	@Autowired
-	private AmazonS3 cloudClient;
+	private AmazonS3 S3_CLOUD_CLIENT;
 	
 	@Override
 	public String uploadFile(MultipartFile file, String folderName) throws ImageProcessingException, IOException {
@@ -49,7 +46,7 @@ public class CloudStorageService implements SortifyCloudStorageService {
 
 		File uploadObject = toFile(file);
 		String fileName = folderName + "/" + imageFileName;
-		cloudClient.putObject(new PutObjectRequest(s3BucketName, fileName, uploadObject));
+		S3_CLOUD_CLIENT.putObject(new PutObjectRequest(S3_BUCKET_NAME, fileName, uploadObject));
 
 		uploadObject.delete();
 		return "File uploaded: " + fileName;
@@ -58,7 +55,7 @@ public class CloudStorageService implements SortifyCloudStorageService {
 
 	@Override
 	public byte[] downloadFile(String fileName, String folderName) {
-		S3Object s3Obj = cloudClient.getObject(s3BucketName, folderName + "/" + fileName);
+		S3Object s3Obj = S3_CLOUD_CLIENT.getObject(S3_BUCKET_NAME, folderName + "/" + fileName);
 		S3ObjectInputStream inputStream = s3Obj.getObjectContent();
 		try {
             return IOUtils.toByteArray(inputStream);
@@ -71,7 +68,7 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	
 	@Override
 	public String deleteFile(String fileName, String folderName) {
-		cloudClient.deleteObject(s3BucketName, folderName + "/" + fileName);
+		S3_CLOUD_CLIENT.deleteObject(S3_BUCKET_NAME, folderName + "/" + fileName);
 		return "Removed: " + fileName;
 	}
 	
@@ -79,7 +76,7 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	@Override
 	public void getAllFile() {
 		//ListObjectsRequest listObjectRequest = new ListObjectsRequest().withBucketName(s3BucketName).withDelimiter("/").withPrefix("photos/");
-		S3Objects objects = S3Objects.withPrefix(cloudClient, s3BucketName,"photos/");
+		S3Objects objects = S3Objects.withPrefix(S3_CLOUD_CLIENT, S3_BUCKET_NAME,"photos/");
 		objects.withDelimiter("/");
 		
 		objects.forEach((S3ObjectSummary objectSummary) -> {
@@ -103,7 +100,7 @@ public class CloudStorageService implements SortifyCloudStorageService {
 		InputStream emptyContent = new ByteArrayInputStream(new byte[0]);
 
 		// put folder as key in S3 bucket
-		cloudClient.putObject(s3BucketName,userFolderName,emptyContent,folderMetadata);
+		S3_CLOUD_CLIENT.putObject(S3_BUCKET_NAME,userFolderName,emptyContent,folderMetadata);
     }
 
 	/**
@@ -112,18 +109,18 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	@Override
 	public void deleteUserFolder(String userFolderName) {
 		userFolderName += "/";
-		ObjectListing objectListing = cloudClient.listObjects(s3BucketName, userFolderName);
+		ObjectListing objectListing = S3_CLOUD_CLIENT.listObjects(S3_BUCKET_NAME, userFolderName);
 		List<DeleteObjectsRequest.KeyVersion> keys = new ArrayList<>();
 		for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
 			keys.add(new DeleteObjectsRequest.KeyVersion(objectSummary.getKey()));
 		}
 		if (!keys.isEmpty()) {
-			DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(s3BucketName)
+			DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(S3_BUCKET_NAME)
 					.withKeys(keys)
 					.withQuiet(false);
-			cloudClient.deleteObjects(deleteObjectsRequest);
+			S3_CLOUD_CLIENT.deleteObjects(deleteObjectsRequest);
 		}
-		cloudClient.deleteObject(s3BucketName,userFolderName);
+		S3_CLOUD_CLIENT.deleteObject(S3_BUCKET_NAME,userFolderName);
 	}
 
 	@Override

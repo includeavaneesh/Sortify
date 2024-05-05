@@ -12,27 +12,27 @@ import org.springframework.stereotype.Service;
 public class UserService implements SortifyUserService {
 
     @Autowired
-    private SortifyUserRepository sortifyUserRepository;
+    private SortifyUserRepository USER_REPOSITORY;
 
     @Override
     public SortifyUser addUser(SortifyUser user) {
-        return sortifyUserRepository.save(user);
+        return USER_REPOSITORY.save(user);
     }
 
     @Override
     public void deleteUser(String username) {
-        sortifyUserRepository.deleteById(username);
+        USER_REPOSITORY.deleteById(username);
     }
 
     @Override
     public ArrayList<SortifyUser> retrieveAll() {
-        return (ArrayList<SortifyUser>) sortifyUserRepository.findAll();
+        return (ArrayList<SortifyUser>) USER_REPOSITORY.findAll();
     }
 
     @Override
     public SortifyUser findUserByUsername(String username) {
-        if (sortifyUserRepository.findById(username).isPresent()) {
-            return sortifyUserRepository.findById(username).get();
+        if (USER_REPOSITORY.findById(username).isPresent()) {
+            return USER_REPOSITORY.findById(username).get();
         }
 
         return null;
@@ -62,10 +62,7 @@ public class UserService implements SortifyUserService {
             oldUser.setUserLastName(newUser.getUserLastName());
         }
 
-        sortifyUserRepository.save(oldUser);
-
-
+        USER_REPOSITORY.save(oldUser);
         return oldUser;
-
     }
 }
