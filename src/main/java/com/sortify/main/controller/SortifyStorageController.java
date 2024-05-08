@@ -2,12 +2,10 @@ package com.sortify.main.controller;
 
 import com.drew.imaging.ImageProcessingException;
 import com.sortify.main.model.SortifyFolder;
+import com.sortify.main.model.SortifyImage;
 import com.sortify.main.model.SortifySubFolder;
 import com.sortify.main.model.SortifyUser;
-import com.sortify.main.service.SortifyCloudStorageService;
-import com.sortify.main.service.SortifyFolderService;
-import com.sortify.main.service.SortifySubFolderService;
-import com.sortify.main.service.SortifyUserService;
+import com.sortify.main.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -29,6 +27,9 @@ public class SortifyStorageController {
 
 	@Autowired
 	private SortifySubFolderService SUBFOLDER_SERVICE;
+
+	@Autowired
+	private SortifyImageService IMAGE_SERVICE;
 	
 	@Autowired
 	private SortifyCloudStorageService CLOUD_SERVICE;
@@ -91,22 +92,21 @@ public class SortifyStorageController {
 	 * @return Currently added folder
 	 */
 	@GetMapping("/addFolder")
-	public ResponseEntity<?> createFolder(@PathVariable String username) {
+	public ResponseEntity<?> createFolder(@PathVariable String username, @RequestBody SortifySubFolder subFolder) {
 		SortifyUser user = USER_SERVICE.findUserByUsername(username);
 		SortifyFolder parentFolder = user.getParentFolder();
 
-
-		SortifySubFolder subFolder = new SortifySubFolder();
-		subFolder.setSubFolderId("testFolder");
+//		SortifySubFolder subFolder = new SortifySubFolder();
+//		subFolder.setSubFolderId("testFolder");
 		subFolder.setParentFolder(parentFolder);
-		subFolder.setSubFolderName("testingName");
+//		subFolder.setSubFolderName("testingName");
 
 		parentFolder.addSubFolder(subFolder);
 
 		FOLDER_SERVICE.addFolder(parentFolder);
 
-		CLOUD_SERVICE.createUserFolder(parentFolder.getFolderId() + "/testingName");
-		return ResponseEntity.ok().body(SUBFOLDER_SERVICE.findSubFolder("testFolder"));
+		CLOUD_SERVICE.createUserFolder(parentFolder.getFolderId() + "/" + subFolder.getSubFolderName());
+		return ResponseEntity.ok().body(SUBFOLDER_SERVICE.findSubFolder(subFolder.getSubFolderId()));
 	}
 
 	@GetMapping("/allFolder")
@@ -126,4 +126,13 @@ public class SortifyStorageController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 	}
+
+//	@GetMapping("/updateFolder")
+//	public ResponseEntity<?> updateFolder(@RequestParam(name = "folder") String folderId, @RequestParam(name = "image") String imageId) {
+//		SortifyImage image = IMAGE_SERVICE.updateImage(imageId, folderId);
+//
+//		return ResponseEntity.ok().body(image);
+//	}
+
+
 }

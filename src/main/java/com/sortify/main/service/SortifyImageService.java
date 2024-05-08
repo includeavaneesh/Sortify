@@ -6,4 +6,5 @@ public interface SortifyImageService {
     void saveImage(SortifyImage image);
     void deleteImage(String imageId);
     SortifyImage findImage(String imageId);
+    SortifyImage updateImage(String imageId, String subFolderId);
 }
