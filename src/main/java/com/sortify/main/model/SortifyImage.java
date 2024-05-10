@@ -2,11 +2,12 @@ package com.sortify.main.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.apache.commons.math3.ml.clustering.Clusterable;
 
 import java.util.Date;
 
 @Entity(name = "SORTIFY_IMAGE")
-public class SortifyImage {
+public class SortifyImage implements Clusterable {
 
 	@Id
 	private String fileName;
@@ -111,4 +112,8 @@ public class SortifyImage {
 	}
 
 
+	@Override
+	public double[] getPoint() {
+		return new double[]{geoLocationX, geoLocationY};
+	}
 }
