@@ -12,7 +12,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 public interface SortifyCloudStorageService {
@@ -37,7 +39,6 @@ public interface SortifyCloudStorageService {
             GeoLocation geoLocation = gpsDirectory.getGeoLocation();
             if (geoLocation != null && !geoLocation.isZero()) {
                 // Add to our collection for use below
-                CloudStorageService.log.info(geoLocation.toString());
                 return new double[]{geoLocation.getLatitude(), geoLocation.getLongitude()};
             }
         }
@@ -51,7 +52,7 @@ public interface SortifyCloudStorageService {
             fos.write(file.getBytes());
 
         } catch (IOException e) {
-            CloudStorageService.log.error("Error in file upload");
+            System.err.println(e.getMessage());
         }
         return convertedFile;
     }
@@ -61,11 +62,14 @@ public interface SortifyCloudStorageService {
     String deleteFile(String fileName, String folderName);
 
     //temp func
-    void getAllFile();
+    List<String> getAllFile(String userFolderName);
 
     void createUserFolder(String userFolderName);
 
     void deleteUserFolder(String userFolderName);
 
     void createUserSubFolder(SortifyUser user);
+
+    boolean keyExists(String fileName, String userFolderName);
+    URL generatePresignedURL(String fileName);
 }

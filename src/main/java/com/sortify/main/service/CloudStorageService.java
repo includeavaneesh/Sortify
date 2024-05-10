@@ -29,9 +29,8 @@ import com.amazonaws.services.s3.model.*;
 
 
 @Service
+@Slf4j
 public class CloudStorageService implements SortifyCloudStorageService {
-
-	public static Logger log;
 
 	@Value("${s3.bucket}")
 	private String S3_BUCKET_NAME;
@@ -50,7 +49,8 @@ public class CloudStorageService implements SortifyCloudStorageService {
 		double[] coordinates = getImageCoordinates(file);
 		String imageFileName = file.getOriginalFilename();
 
-		String subFolderId = "testFolder";
+//		Rule: folderName_0 will be a sub folder assigned by default upon sign up. This must be not deleted in any case.
+		String subFolderId = folderName + "_0";
 		SortifySubFolder subFolder = SUBFOLDER_SERVICE.findSubFolder(subFolderId);
 
 		SortifyImage image = new SortifyImage();
@@ -68,22 +68,11 @@ public class CloudStorageService implements SortifyCloudStorageService {
 
 		S3_CLOUD_CLIENT.putObject(new PutObjectRequest(S3_BUCKET_NAME, fileName, uploadObject));
 
-//		Get pre signed URL
-		Date expiration = new Date();
-		long expTimeMillis = expiration.getTime();
-		expTimeMillis += 1000 * 60 * 60; // 1 hour timeout
-		expiration.setTime(expTimeMillis);
-
-		GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(S3_BUCKET_NAME, fileName)
-				.withMethod(HttpMethod.GET)
-				.withExpiration(expiration);
-
-		URL s3URL = S3_CLOUD_CLIENT.generatePresignedUrl(generatePresignedUrlRequest);
 		boolean isDeleted = uploadObject.delete();
 		if(!isDeleted) {
 			return "File could not be uploaded: " + fileName;
 		}
-		return "File uploaded successfully: " + fileName + " at " + s3URL;
+		return "File uploaded successfully: " + fileName;
 		
 	}
 
@@ -109,15 +98,17 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	
 	//temp func
 	@Override
-	public void getAllFile() {
-		//ListObjectsRequest listObjectRequest = new ListObjectsRequest().withBucketName(s3BucketName).withDelimiter("/").withPrefix("photos/");
-		S3Objects objects = S3Objects.withPrefix(S3_CLOUD_CLIENT, S3_BUCKET_NAME,"photos/");
+	public List<String> getAllFile(String folderName) {
+		S3Objects objects = S3Objects.withPrefix(S3_CLOUD_CLIENT, S3_BUCKET_NAME, folderName + "/");
 		objects.withDelimiter("/");
-		
+		List<String> userFiles = new ArrayList<>();
 		objects.forEach((S3ObjectSummary objectSummary) -> {
 		    // TODO: Consume `objectSummary` the way you need
 		    System.out.println(objectSummary.getKey());
+			userFiles.add(objectSummary.getKey());
 		});
+
+		return userFiles;
 				
 	}
 
@@ -162,5 +153,27 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	public void createUserSubFolder(SortifyUser user) {
 		SortifyFolder parentFolder = user.getParentFolder();
 		String subFolder = "testSubFolder";
+	}
+
+	public boolean keyExists(String fileName, String userFolderName) {
+		List<String> userFiles = getAllFile(userFolderName);
+		return userFiles.contains(fileName);
+	}
+
+	public URL generatePresignedURL(String fileName) {
+//		Filename must be user folder + file name
+		//		Get pre signed URL
+		Date expiration = new Date();
+		long expTimeMillis = expiration.getTime();
+
+		expTimeMillis += 1000 * 60 * 60; // 1 hour timeout
+		expiration.setTime(expTimeMillis);
+
+		GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(S3_BUCKET_NAME, fileName)
+				.withMethod(HttpMethod.GET)
+				.withExpiration(expiration);
+
+		URL s3URL = S3_CLOUD_CLIENT.generatePresignedUrl(generatePresignedUrlRequest);
+		return s3URL;
 	}
 }
