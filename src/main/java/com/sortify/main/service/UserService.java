@@ -1,7 +1,10 @@
 package com.sortify.main.service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
+import com.sortify.main.model.SortifyFolder;
+import com.sortify.main.repository.SortifyFolderRepository;
 import com.sortify.main.repository.SortifyUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,6 +16,9 @@ public class UserService implements SortifyUserService {
 
     @Autowired
     private SortifyUserRepository USER_REPOSITORY;
+
+    @Autowired
+    private SortifyFolderRepository FOLDER_REPOSITORY;
 
     @Override
     public SortifyUser addUser(SortifyUser user) {
@@ -60,6 +66,12 @@ public class UserService implements SortifyUserService {
 
         if (oldUser.getUserLastName() != null && newUser.getUserLastName() != null) {
             oldUser.setUserLastName(newUser.getUserLastName());
+        }
+
+        if(FOLDER_REPOSITORY.findById(oldUser.getUsername()).isPresent()) {
+            SortifyFolder folder = FOLDER_REPOSITORY.findById(oldUser.getUsername()).get();
+            folder.setFolderName(newUser.getUserFirstName() + "-" + newUser.getUserLastName());
+            FOLDER_REPOSITORY.save(folder);
         }
 
         USER_REPOSITORY.save(oldUser);
