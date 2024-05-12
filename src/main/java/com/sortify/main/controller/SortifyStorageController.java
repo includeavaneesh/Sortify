@@ -39,7 +39,7 @@ public class SortifyStorageController {
 	 * @param principal
 	 * @return Current logged in user
 	 */
-	@GetMapping("/access")
+	@GetMapping("/accessUser")
 	public String testPage(Principal principal) {
 		return "This is accessed by: " + principal.toString();
 	}
@@ -49,7 +49,7 @@ public class SortifyStorageController {
 	 * @param file
 	 * @return HTTP Response 200 if uploaded successfully
 	 */
-	@PostMapping("/upload")
+	@PostMapping("/uploadImage")
 	public ResponseEntity<String> upload(@RequestParam(value="file") MultipartFile file, @PathVariable String username) throws ImageProcessingException, IOException {
 		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
 		return new ResponseEntity<>(CLOUD_SERVICE.uploadFile(file, folderName),HttpStatus.OK);
@@ -60,8 +60,8 @@ public class SortifyStorageController {
 	 * @param fileName
 	 * @return Image File requested
 	 */
-	@GetMapping("/download/{fileName}")
-	public ResponseEntity<ByteArrayResource> download(@PathVariable String fileName, @PathVariable String username) {
+	@GetMapping("/downloadImage")
+	public ResponseEntity<ByteArrayResource> download(@RequestParam String fileName, @PathVariable String username) {
 
 		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
 		byte[] data = CLOUD_SERVICE.downloadFile(fileName, folderName);
@@ -80,8 +80,8 @@ public class SortifyStorageController {
 	 * @param fileName
 	 * @return HTTP Response 200 if deleted successfully
 	 */
-	@GetMapping("/delete/{fileName}")
-	public ResponseEntity<String> delete(@PathVariable String fileName, @PathVariable String username) {
+	@GetMapping("/deleteImage")
+	public ResponseEntity<String> delete(@RequestParam String fileName, @PathVariable String username) {
 		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
 		return new ResponseEntity<>(CLOUD_SERVICE.deleteFile(fileName, folderName), HttpStatus.OK);
 	}
@@ -92,20 +92,24 @@ public class SortifyStorageController {
 	 * @return Currently added folder
 	 */
 	@GetMapping("/addFolder")
-	public ResponseEntity<?> createFolder(@PathVariable String username, @RequestBody SortifySubFolder subFolder) {
+	public ResponseEntity<?> createFolder(@PathVariable String username) {
 		SortifyUser user = USER_SERVICE.findUserByUsername(username);
+
+		if(user == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with the username: " + username + " does not exist");
+		}
+
 		SortifyFolder parentFolder = user.getParentFolder();
-
-//		SortifySubFolder subFolder = new SortifySubFolder();
-//		subFolder.setSubFolderId("testFolder");
+		if(SUBFOLDER_SERVICE.findSubFolder(parentFolder.getFolderId() + "_0") != null) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Folder already exists");
+		}
+		SortifySubFolder subFolder = new SortifySubFolder();
+		subFolder.setSubFolderId(parentFolder.getFolderId() + "_0");
+		subFolder.setSubFolderName(parentFolder.getFolderId() + "_0");
 		subFolder.setParentFolder(parentFolder);
-//		subFolder.setSubFolderName("testingName");
-
 		parentFolder.addSubFolder(subFolder);
-
 		FOLDER_SERVICE.addFolder(parentFolder);
 
-		CLOUD_SERVICE.createUserFolder(parentFolder.getFolderId() + "/" + subFolder.getSubFolderName());
 		return ResponseEntity.ok().body(SUBFOLDER_SERVICE.findSubFolder(subFolder.getSubFolderId()));
 	}
 
