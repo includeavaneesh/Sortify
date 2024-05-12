@@ -51,8 +51,8 @@ public class SortifyStorageController {
 	 */
 	@PostMapping("/uploadImage")
 	public ResponseEntity<String> upload(@RequestParam(value="file") MultipartFile file, @PathVariable String username) throws ImageProcessingException, IOException {
-		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
-		return new ResponseEntity<>(CLOUD_SERVICE.uploadFile(file, folderName),HttpStatus.OK);
+		String folderId = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
+		return new ResponseEntity<>(CLOUD_SERVICE.uploadFile(file, folderId),HttpStatus.OK);
 	}
 
 	/**
@@ -103,6 +103,7 @@ public class SortifyStorageController {
 		if(SUBFOLDER_SERVICE.findSubFolder(parentFolder.getFolderId() + "_0") != null) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Folder already exists");
 		}
+
 		SortifySubFolder subFolder = new SortifySubFolder();
 		subFolder.setSubFolderId(parentFolder.getFolderId() + "_0");
 		subFolder.setSubFolderName(parentFolder.getFolderId() + "_0");
@@ -130,6 +131,8 @@ public class SortifyStorageController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 	}
+
+
 
 //	@GetMapping("/updateFolder")
 //	public ResponseEntity<?> updateFolder(@RequestParam(name = "folder") String folderId, @RequestParam(name = "image") String imageId) {

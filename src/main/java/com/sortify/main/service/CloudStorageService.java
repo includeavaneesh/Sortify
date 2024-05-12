@@ -56,7 +56,7 @@ public class CloudStorageService implements SortifyCloudStorageService {
 		SortifyImage image = new SortifyImage();
 		image.setFileName(imageFileName);
 		image.setGeoLocationX(coordinates[0]);
-		image.setGeoLocationX(coordinates[1]);
+		image.setGeoLocationY(coordinates[1]);
 		image.setDateCreated(new Date());
 		image.setFileType("jpg");
 		image.setSubFolder(subFolder);
