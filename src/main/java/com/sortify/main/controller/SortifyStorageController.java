@@ -51,7 +51,8 @@ public class SortifyStorageController {
 	 */
 	@PostMapping("/uploadImage")
 	public ResponseEntity<String> upload(@RequestParam(value="file") MultipartFile file, @PathVariable String username) throws ImageProcessingException, IOException {
-		String folderId = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
+		SortifyFolder parentFolder = USER_SERVICE.findUserByUsername(username).getParentFolder();
+		String folderId = parentFolder.getFolderId();
 		return new ResponseEntity<>(CLOUD_SERVICE.uploadFile(file, folderId),HttpStatus.OK);
 	}
 
@@ -65,14 +66,14 @@ public class SortifyStorageController {
 
 		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
 		byte[] data = CLOUD_SERVICE.downloadFile(fileName, folderName);
-		ByteArrayResource rsc = new ByteArrayResource(data);
+		ByteArrayResource resource = new ByteArrayResource(data);
 
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.contentLength(data.length)
 				.header("Content-type","application/octet-stream")
 				.header("Content-disposition", "attachment; filename=\"" + fileName + "\"")
-				.body(rsc);
+				.body(resource);
 	}
 
 	/**
@@ -131,6 +132,11 @@ public class SortifyStorageController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 	}
+
+	@GetMapping("/getPhotos")
+	public ResponseEntity<?> getAllPhotos(@PathVariable String username) {
+        return null;
+    }
 
 
 
