@@ -31,9 +31,6 @@ public class SortifyStorageController {
 	private SortifySubFolderService SUBFOLDER_SERVICE;
 
 	@Autowired
-	private SortifyImageService IMAGE_SERVICE;
-
-	@Autowired
 	private SortifyImageClustering CLUSTER_SERVICE;
 	
 	@Autowired
