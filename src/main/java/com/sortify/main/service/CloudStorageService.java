@@ -55,12 +55,13 @@ public class CloudStorageService implements SortifyCloudStorageService {
 		double[] coordinates = getImageCoordinates(file);
 		String imageFileName = file.getOriginalFilename();
 
-//		Rule: folderName_0 will be a sub folder assigned by default upon sign up. This must be not deleted in any case.
+		//		Rule: folderName_0 will be a sub folder assigned by default upon sign up.
+		//		This must be not deleted in any case.
 		String subFolderId = parentFolderFolderId + "_0";
 		SortifySubFolder subFolder = SUBFOLDER_SERVICE.findSubFolder(subFolderId);
 
 		SortifyImage image = new SortifyImage();
-		image.setFileName(imageFileName);
+		image.setFileName(username + "/" + imageFileName);
 		image.setGeoLocationX(coordinates[0]);
 		image.setGeoLocationY(coordinates[1]);
 		image.setDateCreated(new Date());
@@ -99,21 +100,23 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	
 	@Override
 	public String deleteFile(String fileName, String username) {
-		IMAGE_SERVICE.deleteImage(fileName);
+		String sqlImageID = username + "/" + fileName;
+		if(IMAGE_SERVICE.findImage(sqlImageID) == null) {
+			return "The file:" + fileName + " does not exist";
+		}
 
+		IMAGE_SERVICE.deleteImage(sqlImageID);
 		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
 		S3_CLOUD_CLIENT.deleteObject(S3_BUCKET_NAME, folderName + "/" + fileName);
 		return "Removed: " + fileName;
 	}
-	
-	//temp func
+
 	@Override
 	public List<String> getAllFile(String folderName) {
 		S3Objects objects = S3Objects.withPrefix(S3_CLOUD_CLIENT, S3_BUCKET_NAME, folderName + "/");
 		objects.withDelimiter("/");
 		List<String> userFiles = new ArrayList<>();
 		objects.forEach((S3ObjectSummary objectSummary) -> {
-		    // TODO: Consume `objectSummary` the way you need
 		    System.out.println(objectSummary.getKey());
 			userFiles.add(objectSummary.getKey());
 		});
@@ -157,12 +160,6 @@ public class CloudStorageService implements SortifyCloudStorageService {
 			S3_CLOUD_CLIENT.deleteObjects(deleteObjectsRequest);
 		}
 		S3_CLOUD_CLIENT.deleteObject(S3_BUCKET_NAME,userFolderName);
-	}
-
-	@Override
-	public void createUserSubFolder(SortifyUser user) {
-		SortifyFolder parentFolder = user.getParentFolder();
-		String subFolder = "testSubFolder";
 	}
 
 	public boolean keyExists(String fileName, String userFolderName) {

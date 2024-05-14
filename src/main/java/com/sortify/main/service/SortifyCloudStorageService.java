@@ -57,9 +57,9 @@ public interface SortifyCloudStorageService {
         return convertedFile;
     }
 
-    byte[] downloadFile(String fileName, String folderName);
+    byte[] downloadFile(String fileName, String username);
 
-    String deleteFile(String fileName, String folderName);
+    String deleteFile(String fileName, String username);
 
     //temp func
     List<String> getAllFile(String userFolderName);
@@ -67,8 +67,6 @@ public interface SortifyCloudStorageService {
     void createUserFolder(String userFolderName);
 
     void deleteUserFolder(String userFolderName);
-
-    void createUserSubFolder(SortifyUser user);
 
     boolean keyExists(String fileName, String userFolderName);
     URL generatePresignedURL(String fileName);

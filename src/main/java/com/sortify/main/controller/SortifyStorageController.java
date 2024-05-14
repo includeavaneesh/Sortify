@@ -42,7 +42,7 @@ public class SortifyStorageController {
 	 * @return Current logged in user
 	 */
 	@GetMapping("/accessUser")
-	public String testPage(Principal principal) {
+	public String signedInUser(Principal principal) {
 		return "This is accessed by: " + principal.toString();
 	}
 
@@ -81,7 +81,9 @@ public class SortifyStorageController {
 	 */
 	@GetMapping("/deleteImage")
 	public ResponseEntity<String> delete(@RequestParam String fileName, @PathVariable String username) {
-		return new ResponseEntity<>(CLOUD_SERVICE.deleteFile(fileName, username), HttpStatus.OK);
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(CLOUD_SERVICE.deleteFile(fileName, username));
 	}
 
 	/**
@@ -94,12 +96,16 @@ public class SortifyStorageController {
 		SortifyUser user = USER_SERVICE.findUserByUsername(username);
 
 		if(user == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with the username: " + username + " does not exist");
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body("User with the username: " + username + " does not exist");
 		}
 
 		SortifyFolder parentFolder = user.getParentFolder();
 		if(SUBFOLDER_SERVICE.findSubFolder(parentFolder.getFolderId() + "_0") != null) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("Folder already exists");
+			return ResponseEntity
+					.status(HttpStatus.CONFLICT)
+					.body("Folder already exists");
 		}
 
 		SortifySubFolder subFolder = new SortifySubFolder();
@@ -109,7 +115,9 @@ public class SortifyStorageController {
 		parentFolder.addSubFolder(subFolder);
 		FOLDER_SERVICE.addFolder(parentFolder);
 
-		return ResponseEntity.ok().body(SUBFOLDER_SERVICE.findSubFolder(subFolder.getSubFolderId()));
+		return ResponseEntity
+				.ok()
+				.body(SUBFOLDER_SERVICE.findSubFolder(subFolder.getSubFolderId()));
 	}
 
 	@GetMapping("/allFolder")
@@ -117,14 +125,14 @@ public class SortifyStorageController {
 		return ResponseEntity.ok().body(FOLDER_SERVICE.getAllSubFolder(username));
 	}
 
-	/*
-	todo: fix, any user can access anyone's sub folders
-	 */
 	@GetMapping("/getFolder")
-	public ResponseEntity<?> getSubFolder(@RequestBody SortifySubFolder subFolder) {
+	public ResponseEntity<?> getSubFolder(@RequestBody SortifySubFolder subFolder, @PathVariable String username) {
 		String subFolderId = subFolder.getSubFolderId();
 		SortifySubFolder retrievedSubFolder = SUBFOLDER_SERVICE.findSubFolder(subFolderId);
-		if(retrievedSubFolder != null){
+		String parentFolderAccessedBySubFolder = retrievedSubFolder.getParentFolder().getFolderId();
+		String parentFolderAccessedByUser = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
+
+		if(parentFolderAccessedBySubFolder.equals(parentFolderAccessedByUser)){
 			return ResponseEntity.ok().body(SUBFOLDER_SERVICE.findSubFolder(subFolderId).getImageList());
 		}
 		else{
@@ -141,12 +149,12 @@ public class SortifyStorageController {
 		for(SortifySubFolder subFolder : subFolderList) {
 			imageList.addAll(subFolder.getImageList());
 		}
+
 		CLUSTER_SERVICE.clusterImages(imageList, username);
 
-		SortifyFolder folderZ = FOLDER_SERVICE.findFolder(username);
-		List<SortifySubFolder> newSubFolderList = folderZ.getSubFolders();
-
-        return ResponseEntity.ok().body(newSubFolderList);
+		return ResponseEntity
+				.ok()
+				.body(FOLDER_SERVICE.findFolder(username).getSubFolders());
     }
 
 }
