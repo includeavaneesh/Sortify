@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -54,6 +56,15 @@ public class SubFolderService implements SortifySubFolderService{
             FOLDER_SERVICE.addFolder(folder);
         }
 
+    }
+
+    @Override
+    public void deleteClusteringFolder(String folderId) {
+        SortifyFolder folder = FOLDER_SERVICE.findFolder(folderId);
+        List<SortifySubFolder> subFolderList = folder.getSubFolders();
+        SortifySubFolder mainSubFolder = subFolderList.get(0);
+        subFolderList.removeIf(subFolder -> subFolder != mainSubFolder && subFolder.getImageList().isEmpty());
+        FOLDER_SERVICE.addFolder(folder);
     }
 
 }

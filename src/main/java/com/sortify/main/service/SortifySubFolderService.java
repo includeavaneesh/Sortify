@@ -9,4 +9,5 @@ public interface SortifySubFolderService {
     void deleteSubFolder(String subFolderId);
     SortifySubFolder findSubFolder(String subFolderId);
     void deleteAllSubFolder(String folderId);
+    void deleteClusteringFolder(String folderId);
 }

@@ -39,8 +39,6 @@ public class ImageService implements SortifyImageService{
         SortifySubFolder subFolder = SUBFOLDER_SERVICE.findSubFolder(subFolderId);
         image.setSubFolder(subFolder);
         SUBFOLDER_SERVICE.saveSubFolder(subFolder);
-
         return image;
-
     }
 }

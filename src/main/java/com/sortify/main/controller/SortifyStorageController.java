@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/{username}")
@@ -30,6 +32,9 @@ public class SortifyStorageController {
 
 	@Autowired
 	private SortifyImageService IMAGE_SERVICE;
+
+	@Autowired
+	private SortifyImageClustering CLUSTER_SERVICE;
 	
 	@Autowired
 	private SortifyCloudStorageService CLOUD_SERVICE;
@@ -135,7 +140,19 @@ public class SortifyStorageController {
 
 	@GetMapping("/getPhotos")
 	public ResponseEntity<?> getAllPhotos(@PathVariable String username) {
-        return null;
+		List<SortifyImage> imageList = new ArrayList<>();
+		SortifyFolder folder = FOLDER_SERVICE.findFolder(username);
+		List<SortifySubFolder> subFolderList = folder.getSubFolders();
+
+		for(SortifySubFolder subFolder : subFolderList) {
+			imageList.addAll(subFolder.getImageList());
+		}
+		CLUSTER_SERVICE.clusterImages(imageList, username);
+
+		SortifyFolder folderZ = FOLDER_SERVICE.findFolder(username);
+		List<SortifySubFolder> newSubFolderList = folderZ.getSubFolders();
+
+        return ResponseEntity.ok().body(newSubFolderList);
     }
 
 
