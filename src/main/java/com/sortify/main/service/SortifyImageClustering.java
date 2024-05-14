@@ -39,7 +39,7 @@ public class SortifyImageClustering {
 
     // Epsilon: Max radius for a cluster in mts, MIN_PTS -> minimum points to consider a cluster
     private final double EPSILON = 30000;
-    private final int MIN_PTS = 2;
+    private final int MIN_PTS = 1;
 
     @Autowired
     private SortifyUserService USER_SERVICE;
