@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -30,6 +31,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> {
                             // Allow sign up page to have no auth needed
                             auth.requestMatchers(HttpMethod.POST,"/signup").permitAll();
+                            auth.requestMatchers("/{username}/**").access(new WebExpressionAuthorizationManager("#username == authentication.name"));
                             auth.anyRequest().authenticated();
                         }
                 )
