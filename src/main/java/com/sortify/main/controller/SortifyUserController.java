@@ -6,6 +6,7 @@ import com.sortify.main.service.SortifyCloudStorageService;
 import com.sortify.main.service.SortifyFolderService;
 import com.sortify.main.service.SortifyUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,9 +64,10 @@ public class SortifyUserController {
 
     }
 
-//    @GetMapping("/allUsers")
-//    public ArrayList<SortifyUser> getAllUsers() {
-//        return USER_SERVICE.retrieveAll();
-//    }
+    @GetMapping("/allUsers")
+    public Page<SortifyUser> getAllUsers(@RequestParam(value = "page") int page,
+                                         @RequestParam(value = "size") int size) {
+        return USER_SERVICE.getPaginatedUsers(page, size);
+    }
 
 }

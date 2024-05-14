@@ -9,6 +9,8 @@ import com.sortify.main.repository.SortifyUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sortify.main.model.SortifyUser;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +35,12 @@ public class UserService implements SortifyUserService {
     @Override
     public ArrayList<SortifyUser> retrieveAll() {
         return (ArrayList<SortifyUser>) USER_REPOSITORY.findAll();
+    }
+
+    @Override
+    public Page<SortifyUser> getPaginatedUsers(int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        return USER_REPOSITORY.findAllByOrderByUsernameAsc(pageable);
     }
 
     @Override
