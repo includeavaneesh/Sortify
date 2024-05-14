@@ -9,6 +9,6 @@ public interface SortifyFolderService {
     void addFolder(SortifyFolder folder);
     void deleteFolder(String folderId);
     SortifyFolder findFolder(String username);
-    List<SortifySubFolder> getAllSubFolder(String folderId);
+    List<SortifySubFolder> getAllSubFolder(String username);
 
 }

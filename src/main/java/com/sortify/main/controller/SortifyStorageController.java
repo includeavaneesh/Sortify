@@ -56,9 +56,7 @@ public class SortifyStorageController {
 	 */
 	@PostMapping("/uploadImage")
 	public ResponseEntity<String> upload(@RequestParam(value="file") MultipartFile file, @PathVariable String username) throws ImageProcessingException, IOException {
-		SortifyFolder parentFolder = USER_SERVICE.findUserByUsername(username).getParentFolder();
-		String folderId = parentFolder.getFolderId();
-		return new ResponseEntity<>(CLOUD_SERVICE.uploadFile(file, folderId),HttpStatus.OK);
+		return new ResponseEntity<>(CLOUD_SERVICE.uploadFile(file, username),HttpStatus.OK);
 	}
 
 	/**
@@ -68,9 +66,7 @@ public class SortifyStorageController {
 	 */
 	@GetMapping("/downloadImage")
 	public ResponseEntity<ByteArrayResource> download(@RequestParam String fileName, @PathVariable String username) {
-
-		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
-		byte[] data = CLOUD_SERVICE.downloadFile(fileName, folderName);
+		byte[] data = CLOUD_SERVICE.downloadFile(fileName, username);
 		ByteArrayResource resource = new ByteArrayResource(data);
 
 		return ResponseEntity
@@ -88,8 +84,7 @@ public class SortifyStorageController {
 	 */
 	@GetMapping("/deleteImage")
 	public ResponseEntity<String> delete(@RequestParam String fileName, @PathVariable String username) {
-		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
-		return new ResponseEntity<>(CLOUD_SERVICE.deleteFile(fileName, folderName), HttpStatus.OK);
+		return new ResponseEntity<>(CLOUD_SERVICE.deleteFile(fileName, username), HttpStatus.OK);
 	}
 
 	/**
@@ -122,10 +117,12 @@ public class SortifyStorageController {
 
 	@GetMapping("/allFolder")
 	public ResponseEntity<?> getAllSubFolder(@PathVariable String username) {
-		String folderId = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
-		return ResponseEntity.ok().body(FOLDER_SERVICE.getAllSubFolder(folderId));
+		return ResponseEntity.ok().body(FOLDER_SERVICE.getAllSubFolder(username));
 	}
 
+	/*
+	todo: fix, any user can access anyone's sub folders
+	 */
 	@GetMapping("/getFolder")
 	public ResponseEntity<?> getSubFolder(@RequestBody SortifySubFolder subFolder) {
 		String subFolderId = subFolder.getSubFolderId();
@@ -154,15 +151,5 @@ public class SortifyStorageController {
 
         return ResponseEntity.ok().body(newSubFolderList);
     }
-
-
-
-//	@GetMapping("/updateFolder")
-//	public ResponseEntity<?> updateFolder(@RequestParam(name = "folder") String folderId, @RequestParam(name = "image") String imageId) {
-//		SortifyImage image = IMAGE_SERVICE.updateImage(imageId, folderId);
-//
-//		return ResponseEntity.ok().body(image);
-//	}
-
 
 }

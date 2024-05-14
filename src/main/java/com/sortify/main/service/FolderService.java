@@ -37,10 +37,9 @@ public class FolderService implements SortifyFolderService{
     }
 
     @Override
-    public List<SortifySubFolder> getAllSubFolder(String folderId) {
-
+    public List<SortifySubFolder> getAllSubFolder(String username) {
+        String folderId = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
         return FOLDER_REPOSITORY.findById(folderId).get().getSubFolders();
-
     }
 
 

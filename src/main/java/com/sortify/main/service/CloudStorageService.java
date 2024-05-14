@@ -39,18 +39,24 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	private AmazonS3 S3_CLOUD_CLIENT;
 
 	@Autowired
+	private SortifyUserService USER_SERVICE;
+
+	@Autowired
 	private SortifySubFolderService SUBFOLDER_SERVICE;
 
 	@Autowired
 	private SortifyImageService IMAGE_SERVICE;
 	
 	@Override
-	public String uploadFile(MultipartFile file, String folderName) throws ImageProcessingException, IOException {
+	public String uploadFile(MultipartFile file, String username) throws ImageProcessingException, IOException {
+		SortifyFolder parentFolder = USER_SERVICE.findUserByUsername(username).getParentFolder();
+		String parentFolderFolderId = parentFolder.getFolderId();
+
 		double[] coordinates = getImageCoordinates(file);
 		String imageFileName = file.getOriginalFilename();
 
 //		Rule: folderName_0 will be a sub folder assigned by default upon sign up. This must be not deleted in any case.
-		String subFolderId = folderName + "_0";
+		String subFolderId = parentFolderFolderId + "_0";
 		SortifySubFolder subFolder = SUBFOLDER_SERVICE.findSubFolder(subFolderId);
 
 		SortifyImage image = new SortifyImage();
@@ -64,7 +70,7 @@ public class CloudStorageService implements SortifyCloudStorageService {
 		IMAGE_SERVICE.saveImage(image);
 
 		File uploadObject = toFile(file);
-		String fileName = folderName + "/" + imageFileName;
+		String fileName = parentFolderFolderId + "/" + imageFileName;
 
 		S3_CLOUD_CLIENT.putObject(new PutObjectRequest(S3_BUCKET_NAME, fileName, uploadObject));
 
@@ -77,8 +83,10 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	}
 
 	@Override
-	public byte[] downloadFile(String fileName, String folderName) {
-		S3Object s3Obj = S3_CLOUD_CLIENT.getObject(S3_BUCKET_NAME, folderName + "/" + fileName);
+	public byte[] downloadFile(String fileName, String username) {
+		SortifyFolder parentFolder = USER_SERVICE.findUserByUsername(username).getParentFolder();
+		String parentFolderFolderId = parentFolder.getFolderId();
+		S3Object s3Obj = S3_CLOUD_CLIENT.getObject(S3_BUCKET_NAME, parentFolderFolderId + "/" + fileName);
 		S3ObjectInputStream inputStream = s3Obj.getObjectContent();
 		try {
             return IOUtils.toByteArray(inputStream);
@@ -90,8 +98,10 @@ public class CloudStorageService implements SortifyCloudStorageService {
 	}
 	
 	@Override
-	public String deleteFile(String fileName, String folderName) {
+	public String deleteFile(String fileName, String username) {
 		IMAGE_SERVICE.deleteImage(fileName);
+
+		String folderName = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
 		S3_CLOUD_CLIENT.deleteObject(S3_BUCKET_NAME, folderName + "/" + fileName);
 		return "Removed: " + fileName;
 	}
