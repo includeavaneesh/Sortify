@@ -157,4 +157,10 @@ public class SortifyStorageController {
 				.body(FOLDER_SERVICE.findFolder(username).getSubFolders());
     }
 
+	@GetMapping("/listPhotos")
+	public List<SortifyImage> listPhotos(@PathVariable String username) {
+		String folderId = USER_SERVICE.findUserByUsername(username).getParentFolder().getFolderId();
+		return SUBFOLDER_SERVICE.getAllPhotos(folderId);
+	}
+
 }
